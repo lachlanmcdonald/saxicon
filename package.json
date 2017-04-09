@@ -1,0 +1,47 @@
+{
+  "name": "saxicon",
+  "version": "0.0.1",
+  "description": "",
+  "license": "BSD-3-Clause",
+  "homepage": "https://github.com/lachlanmcdonald/saxicon/",
+  "author": "Lachlan McDonald <lachlan@radelaide.net>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lachlanmcdonald/saxicon.git"
+  },
+  "contributors": [
+    "Lachlan McDonald <lachlan@radelaide.net>"
+  ],
+  "bugs": "https://github.com/lachlanmcdonald/saxicon/issues",
+  "engines": {
+    "node": ">=4"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "files": [
+    "index.js"
+  ],
+  "scripts": {
+    "test": "jest"
+  },
+  "eslintConfig": {
+    "env": {
+      "jest": true
+    }
+  },
+  "keywords": [
+    "sax",
+    "saxicon",
+    "icon",
+    "svg",
+    "scss",
+    "sass",
+    "datauri"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "jest": "^19.0.2",
+    "eslint": "^3.10.2"
+  }
+}
