@@ -1,0 +1,85 @@
+@mixin sax-classes($color, $prefix: ".icon-") {
+	@each $icon, $svg in $saxicon-map {
+		#{$prefix}#{$icon} {
+			$width: sax-width($icon);
+			$height: sax-height($icon);
+			background-image: sax($icon, $color);
+			background-size: $width $height;
+			width: $width;
+			height: $height;
+		}
+	}
+}
+
+@function sax-width($icon) {
+	$svg: map_get($saxicon-map, "#{$icon}");
+
+	@if ($svg == null) {
+		@error "Icon does not exist: #{$icon}";
+	}
+	$size: nth($svg, 1);
+
+	@if $size != null {
+		@return $size * 1px;
+	} @else {
+		@warn "Missing dimensions for icon: #{$icon}";
+		@return auto;
+	}
+}
+
+@function sax-height($icon) {
+	$svg: map_get($saxicon-map, "#{$icon}");
+
+	@if ($svg == null) {
+		@error "Icon does not exist: #{$icon}";
+	}
+	$size: nth($svg, 2);
+
+	@if $size != null {
+		@return $size * 1px;
+	} @else {
+		@warn "Missing dimensions for icon: #{$icon}";
+		@return auto;
+	}
+}
+
+@function sax($icon, $args...) {
+	$svg: map_get($saxicon-map, "#{$icon}");
+	@if ($svg == null) {
+		@error "Icon does not exist: #{$icon}";
+	}
+
+	$default-color: null;
+	@if (length($args) > 0) {
+		@if (type-of(nth($args, 1)) == color) {
+			$default-color: nth($args, 1);
+		}
+	}
+
+	$colors: keywords($args);
+	$parts: nth($svg, 3);
+	$str: "";
+
+	@for $i from 1 through length($parts) {
+		$part: nth($parts, $i);
+
+		@if (type-of($part) == color) {
+			$color: map-get($colors, inspect($part));
+
+			@if ($color == null) {
+				@if ($default-color == null) {
+					$color: $part;
+				} @else {
+					$color: $default-color;
+				}
+			}
+
+			$color: str-slice(ie-hex-str($color), 4);
+			$part: "%23#{$color}";
+		}
+
+		$str: "#{$str}#{$part}";
+	}
+
+	@return url("data:image/svg+xml,#{$str}");
+}
