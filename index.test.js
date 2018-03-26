@@ -45,11 +45,24 @@ const testFiles = {
 
 describe('svgColors', () => {
 	describe('getColorKeyword()', () => {
-		test('retrieves keyword for color', () => {
+		test('returns keyword for color', () => {
 			expect(getColorKeyword('000')).toBe('black');
 			expect(getColorKeyword('000000')).toBe('black');
 			expect(getColorKeyword('#000000')).toBe('black');
 			expect(getColorKeyword('#000')).toBe('black');
+			expect(getColorKeyword('#fff')).toBe('white');
+			expect(getColorKeyword('#FFF')).toBe('white');
+		});
+
+		test('returns keyword for differnt spelling', () => {
+			expect(getColorKeyword('0FF')).toBe('cyan');
+			expect(getColorKeyword('2F4F4F')).toBe('darkslategrey');
+			expect(getColorKeyword('696969')).toBe('dimgrey');
+			expect(getColorKeyword('708090')).toBe('slategrey');
+			expect(getColorKeyword('789')).toBe('lightslategrey');
+			expect(getColorKeyword('808080')).toBe('grey');
+			expect(getColorKeyword('A9A9A9')).toBe('darkgrey');
+			expect(getColorKeyword('D3D3D3')).toBe('lightgrey');
 		});
 
 		test('returns the same value for invalid colors', () => {
@@ -64,8 +77,19 @@ describe('svgColors', () => {
 
 	describe('isColorKeyword()', () => {
 		test('returns true for valid keywords', () => {
+			// Keywords in COLOR_LOOKUP
 			expect(isColorKeyword('black')).toBe(true);
 			expect(isColorKeyword('BLACK')).toBe(true);
+
+			// Duplicate keywords (differnt spelling)
+			expect(isColorKeyword('aqua')).toBe(true);
+			expect(isColorKeyword('darkslategray')).toBe(true);
+			expect(isColorKeyword('dimgray')).toBe(true);
+			expect(isColorKeyword('slategray')).toBe(true);
+			expect(isColorKeyword('lightslategray')).toBe(true);
+			expect(isColorKeyword('gray')).toBe(true);
+			expect(isColorKeyword('darkgray')).toBe(true);
+			expect(isColorKeyword('lightgray')).toBe(true);
 		});
 
 		test('does not return true for invaild keywords', () => {
@@ -80,6 +104,46 @@ describe('svgColors', () => {
 });
 
 describe('Saxicon', () => {
+	describe('Dimensions', () => {
+		const sax = new Saxicon();
+
+		test('Both viewBox and attributes', () => {
+			const results = sax.parse([
+				'./svgs/dimensions/both.svg'
+			]);
+
+			expect(results.data[0].width).toBe(134);
+			expect(results.data[0].height).toBe(134);
+		});
+
+		test('Only viewBox', () => {
+			const results = sax.parse([
+				'./svgs/dimensions/viewbox.svg'
+			]);
+
+			expect(results.data[0].width).toBe(134);
+			expect(results.data[0].height).toBe(134);
+		});
+
+		test('Only attributes', () => {
+			const results = sax.parse([
+				'./svgs/dimensions/attributes.svg'
+			]);
+
+			expect(results.data[0].width).toBe(134);
+			expect(results.data[0].height).toBe(134);
+		});
+
+		test('Neither viewBox and attributes', () => {
+			const results = sax.parse([
+				'./svgs/dimensions/none.svg'
+			]);
+
+			expect(results.data[0].width).toBeNull();
+			expect(results.data[0].height).toBeNull();
+		});
+	});
+
 	describe('removeInsignificantWhitespace()', () => {
 		test('does remove insignificant whitespace', () => {
 			const input = fs.readFileSync('./svgs/whitespace/whitespace.svg').toString();
