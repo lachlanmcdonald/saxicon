@@ -15,14 +15,6 @@ const {getColorKeyword, isColorKeyword} = require('./lib/svgColors');
 const SAFE_TAGS = ['rect', 'circle', 'ellipse', 'line', 'polyline', 'polygon', 'path'];
 const COLOR_SPLIT_KEY = '__saxicon__';
 
-const LICENSE_TEXT = `	saxicon 0.0.1
-	Copyright (c) 2018 Lachlan McDonald
-	https://github.com/lachlanmcdonald/saxicon/
-
-	Licensed under the BSD 3-Clause license.
-
-	(This file is generated with saxicon and should not be updated manually.)`;
-
 const XML_DECLARATION_STRING = (new libxml.Document()).toString();
 
 class SaxiconData {
@@ -40,11 +32,8 @@ class SaxiconData {
 			map = [];
 
 		this.data.forEach((set) => {
-			set.svg = set.components.map(function(x) {
-				var a = (x[x.length - 1] === '\'' || x[x.length - 1] === '"'),
-					b = (x[0] === '\'' || x[0] === '"');
-
-				return (a || b) ? '"' + x.replace(/[^\ \-\.\d\w]/g, escape).replace(/"/g, '\'') + '"' : x;
+			set.svg = set.components.map(x => {
+				return isColorKeyword(x) ? x : ('"' + x.replace(/[^\ \-\.\d\w]/g, escape).replace(/"/g, '\'') + '"');
 			}).join(', ');
 
 			map.push('"' + set.iconName + '": (' + set.width + ', ' + set.height + ', (' + set.svg + '))');
@@ -59,33 +48,13 @@ class SaxiconData {
 			'}'
 		].join('\n');
 
-		return '/*\n' + LICENSE_TEXT + '\n*/\n\n' + map + '\n\n' + scssUtils;
+		return `${scssUtils}\n${map}`;
 	}
 }
 
 class Saxicon {
 	constructor(options = {}) {
-		this.options = Object.assign({
-			replaceColors: true,
-			restrict: [],
-			ignore: [],
-			license: LICENSE_TEXT,
-			parseOptions: {
-				ignore_enc: true,
-				noxincnode: true,
-				cdata: true,
-				implied: true,
-				nsclean: true,
-				recover: true,
-				noent: true,
-				doctype: true,
-				noblanks: true,
-				nonet: true
-			},
-			iconName: (sourcePath) => {
-				return path.basename(sourcePath).split('.')[0].trim();
-			}
-		}, options);
+		this.options = Object.assign(Saxicon.defaultOptions, options);
 	}
 
 	static removeInsignificantWhitespace(doc) {
@@ -100,35 +69,57 @@ class Saxicon {
 
 	parseFile(svgPath) {
 		const source = fs.readFileSync(svgPath).toString();
-		const doc = libxml.parseXmlString(source, this.options.parseOptions);
 		let width = null,
-			height = null;
+			height = null,
+			doc = null;
+
+		try {
+			doc = libxml.parseXmlString(source, this.options.parseOptions);
+		} catch (e) {
+			return {
+				path: svgPath,
+				errors: [{
+					message: e.message.trim(),
+					line: e.line,
+					column: e.column
+				}]
+			};
+		}
 
 		// Document size
-		let widthAttribute = doc.root().attr('width');
-		let heightAttribute = doc.root().attr('height');
-		let viewBoxAttribute = doc.root().attr('viewBox');
+		const widthAttribute = doc.root().attr('width');
+		const heightAttribute = doc.root().attr('height');
+		const viewBoxAttribute = doc.root().attr('viewBox');
 
 		if (widthAttribute !== null && heightAttribute !== null) {
 			width = parseFloat(widthAttribute.value());
 			height = parseFloat(heightAttribute.value());
 		} else if (viewBoxAttribute !== null) {
-			let viewBox = viewBoxAttribute.value().match(/\d+(?:\.\d+)?/g);
+			const viewBox = viewBoxAttribute.value().match(/\d+(?:\.\d+)?/g);
 			width = parseFloat(viewBox[2]);
 			height = parseFloat(viewBox[3]);
 		}
 
 		this.walkChildNodes(doc.root());
 
-		// libxml adds in the XML declaration, which needs
-		// to be removed for SVGs
+		// libxml adds in the XML declaration, which needs to be removed for SVGs
 		let docString = doc.toString().replace(XML_DECLARATION_STRING, '');
+
+		// Treat recoverable errors as warnings
+		let warnings = doc.errors.map((e) => {
+			return {
+				message: e.message.trim(),
+				line: e.line,
+				column: e.column
+			};
+		});
 
 		// Remove insignificant whitespace
 		docString = Saxicon.removeInsignificantWhitespace(docString);
 
 		return {
 			path: svgPath,
+			warnings: warnings,
 			iconName: this.options.iconName(svgPath),
 			width: width,
 			height: height,
@@ -148,40 +139,36 @@ class Saxicon {
 
 	walkChildNodes(node) {
 		const children = node.childNodes();
+
 		for (let i = 0; i < children.length; i++) {
 			const node = children[i];
 
 			if (SAFE_TAGS.includes(node.name())) {
-				let stroke = node.attr('stroke');
-				let fill = node.attr('fill');
+				const fillAttribute = node.attr('fill');
+				const strokeAttribute = node.attr('stroke');
+				let fillValue = (fillAttribute === null ? null : fillAttribute.value());
+				let strokeValue = (strokeAttribute === null ? null : strokeAttribute.value());
 
-				if (stroke !== null) {
-					stroke.value();
-				}
-				if (fill !== null) {
-					fill.value();
-				}
-
-				if (fill !== 'none') {
+				if (fillValue !== null && fillValue !== 'none') {
 					if (this.options.replaceColors === true) {
-						fill = getColorKeyword(fill);
+						fillValue = getColorKeyword(fillValue);
 					}
 
-					if (isColorKeyword(fill)) {
-						if (this.allowedReplacement(fill)) {
-							node.attr('fill', (COLOR_SPLIT_KEY + fill + COLOR_SPLIT_KEY));
+					if (isColorKeyword(fillValue)) {
+						if (this.allowedReplacement(fillValue)) {
+							fillAttribute.value(COLOR_SPLIT_KEY + fillValue + COLOR_SPLIT_KEY);
 						}
 					}
 				}
 
-				if (stroke !== null && stroke !== 'none') {
+				if (strokeValue !== null && strokeValue !== 'none') {
 					if (this.options.replaceColors === true) {
-						stroke = getColorKeyword(stroke);
+						strokeValue = getColorKeyword(strokeValue);
 					}
 
-					if (isColorKeyword(stroke)) {
-						if (this.allowedReplacement(stroke)) {
-							node.attr('stroke', (COLOR_SPLIT_KEY + stroke + COLOR_SPLIT_KEY));
+					if (isColorKeyword(strokeValue)) {
+						if (this.allowedReplacement(strokeValue)) {
+							strokeAttribute.value(COLOR_SPLIT_KEY + strokeValue + COLOR_SPLIT_KEY);
 						}
 					}
 				}
@@ -191,6 +178,27 @@ class Saxicon {
 		}
 	}
 }
+
+Saxicon.defaultOptions = {
+	replaceColors: true,
+	restrict: [],
+	ignore: [],
+	parseOptions: {
+		ignore_enc: true,
+		noxincnode: true,
+		cdata: true,
+		implied: true,
+		nsclean: true,
+		recover: true,
+		noent: true,
+		doctype: true,
+		noblanks: true,
+		nonet: true
+	},
+	iconName: (sourcePath) => {
+		return path.basename(sourcePath).split('.')[0].trim();
+	}
+};
 
 exports.Saxicon = Saxicon;
 exports.SaxiconData = SaxiconData;

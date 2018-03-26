@@ -1,3 +1,13 @@
+/*
+	saxicon 0.0.1
+	Copyright (c) 2018 Lachlan McDonald
+	https://github.com/lachlanmcdonald/saxicon/
+
+	Licensed under the BSD 3-Clause license.
+
+	(This file is generated with saxicon and should not be updated manually.)
+*/
+
 @mixin sax-classes($color, $prefix: ".icon-") {
 	@each $icon, $svg in $saxicon-map {
 		#{$prefix}#{$icon} {
@@ -23,6 +33,7 @@
 		@return $size * 1px;
 	} @else {
 		@warn "Missing dimensions for icon: #{$icon}";
+
 		@return auto;
 	}
 }
@@ -39,6 +50,7 @@
 		@return $size * 1px;
 	} @else {
 		@warn "Missing dimensions for icon: #{$icon}";
+
 		@return auto;
 	}
 }
@@ -83,3 +95,4 @@
 
 	@return url("data:image/svg+xml,#{$str}");
 }
+
