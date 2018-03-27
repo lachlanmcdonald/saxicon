@@ -7,8 +7,10 @@
  */
 'use strict';
 
-const { Saxicon } = require('./index');
+const { Saxicon, SaxiconData } = require('./index');
 const { getColorKeyword, isColorKeyword } = require('./lib/svgColors');
+const { execSync } = require('child_process');
+const tmp = require('tmp');
 const fs = require('fs');
 const path = require('path');
 const libxml = require('libxmljs');
@@ -34,9 +36,9 @@ const walkDirecory = (dir, results) => {
 	return results;
 };
 
-const SASS_ENGINE = {
+const SASS_ENGINES = {
 	sassc: 'sassc',
-	Ruby: 'sass'
+	Ruby: 'sass --no-cache'
 };
 
 const testFiles = {
@@ -104,6 +106,44 @@ describe('svgColors', () => {
 });
 
 describe('Saxicon', () => {
+	describe('XML Declarations', () => {
+		test('Omitted XML declaration does not return errors or warnings', () => {
+			const sax = new Saxicon();
+			const results = sax.parse([
+				path.join('svgs', 'xmldeclaration', 'xmldeclaration10.svg')
+			]);
+
+			for (var i = 0; i < results.data.length; i++) {
+				expect(results.data[i].warnings).toHaveLength(0);
+				expect(results.data[i].errors).toHaveLength(0);
+			}
+		});
+
+		test('XML version 1.0 does not return errors or warnings', () => {
+			const sax = new Saxicon();
+			const results = sax.parse([
+				path.join('svgs', 'xmldeclaration', 'xmldeclaration10.svg')
+			]);
+
+			for (var i = 0; i < results.data.length; i++) {
+				expect(results.data[i].warnings).toHaveLength(0);
+				expect(results.data[i].errors).toHaveLength(0);
+			}
+		});
+
+		test('XML version 1.1 returns a warning', () => {
+			const sax = new Saxicon();
+			const results = sax.parse([
+				path.join('svgs', 'xmldeclaration', 'xmldeclaration11.svg')
+			]);
+
+			for (var i = 0; i < results.data.length; i++) {
+				expect(results.data[i].warnings.length).toBeGreaterThan(0);
+				expect(results.data[i].errors).toHaveLength(0);
+			}
+		});
+	});
+
 	describe('Dimensions', () => {
 		const sax = new Saxicon();
 
@@ -146,15 +186,15 @@ describe('Saxicon', () => {
 
 	describe('removeInsignificantWhitespace()', () => {
 		test('does remove insignificant whitespace', () => {
-			const input = fs.readFileSync('./svgs/whitespace/whitespace.svg').toString();
-			const correct = fs.readFileSync('./svgs/whitespace/no-whitespace.svg').toString();
+			const input = fs.readFileSync('./svgs/whitespace/whitespace.svg', 'utf8');
+			const correct = fs.readFileSync('./svgs/whitespace/no-whitespace.svg', 'utf8');
 			const updatedInput = Saxicon.removeInsignificantWhitespace(input);
 			expect(updatedInput).toBe(correct);
 		});
 
 		test('has no side-effects with libxmljs', () => {
 			testFiles.basic.forEach((filePath) => {
-				const svg = fs.readFileSync(filePath).toString();
+				const svg = fs.readFileSync(filePath, 'utf8');
 				const doc = libxml.parseXmlString(svg, Saxicon.defaultOptions.parseOptions);
 
 				const updatedSvg = Saxicon.removeInsignificantWhitespace(doc.toString());
@@ -165,3 +205,27 @@ describe('Saxicon', () => {
 		});
 	});
 });
+
+Object.keys(SASS_ENGINES).forEach((name) => {
+	const command = SASS_ENGINES[name];
+
+	describe('Compiles', () => {
+		describe(name, () => {
+			test('all test inputs with no warnings', () => {
+				const sax = new Saxicon();
+				const results = sax.parse(testFiles.basic);
+
+				for (var i = 0; i < results.data.length; i++) {
+					expect(results.data[i].warnings).toHaveLength(0);
+					expect(results.data[i].errors).toHaveLength(0);
+				}
+
+				const tempFile = tmp.fileSync({postfix: '.scss'});
+				fs.writeSync(tempFile.fd, results.scss());
+
+				execSync(`${command} "${tempFile.name}"`);
+			});
+		});
+	});
+});
+

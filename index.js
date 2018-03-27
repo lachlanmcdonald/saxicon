@@ -15,8 +15,6 @@ const {getColorKeyword, isColorKeyword} = require('./lib/svgColors');
 const SAFE_TAGS = ['rect', 'circle', 'ellipse', 'line', 'polyline', 'polygon', 'path'];
 const COLOR_SPLIT_KEY = '__saxicon__';
 
-const XML_DECLARATION_STRING = (new libxml.Document()).toString();
-
 class SaxiconData {
 	constructor(data) {
 		this.data = data;
@@ -27,7 +25,7 @@ class SaxiconData {
 	}
 
 	scss() {
-		let scssUtils = fs.readFileSync('./lib/saxicon.scss'),
+		let scssUtils = fs.readFileSync('./lib/saxicon.scss', 'utf8'),
 			mapVariable = '$saxicon-map-' + (+new Date()),
 			map = [];
 
@@ -61,6 +59,10 @@ class Saxicon {
 		return doc.replace(/>[\r\n\t ]+</g, '><').trim();
 	}
 
+	static getXMLDeclarationString(version = '1.0', encoding = 'utf8') {
+		return (new libxml.Document(version, encoding)).toString();
+	}
+
 	parse(paths) {
 		return new SaxiconData(paths.map((svgPath) => {
 			return this.parseFile(svgPath);
@@ -68,7 +70,7 @@ class Saxicon {
 	}
 
 	parseFile(svgPath) {
-		const source = fs.readFileSync(svgPath).toString();
+		const source = fs.readFileSync(svgPath, 'utf8');
 		let width = null,
 			height = null,
 			doc = null;
@@ -100,10 +102,12 @@ class Saxicon {
 			height = parseFloat(viewBox[3]);
 		}
 
+		// Walk nodes
 		this.walkChildNodes(doc.root());
 
 		// libxml adds in the XML declaration, which needs to be removed for SVGs
-		let docString = doc.toString().replace(XML_DECLARATION_STRING, '');
+		const version = doc.version();
+		let docString = doc.toString().replace(Saxicon.getXMLDeclarationString(version), '');
 
 		// Treat recoverable errors as warnings
 		let warnings = doc.errors.map((e) => {
@@ -120,6 +124,7 @@ class Saxicon {
 		return {
 			path: svgPath,
 			warnings: warnings,
+			errors: [],
 			iconName: this.options.iconName(svgPath),
 			width: width,
 			height: height,
