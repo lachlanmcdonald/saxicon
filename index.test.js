@@ -7,7 +7,7 @@
  */
 'use strict';
 
-const { Saxicon, SaxiconData } = require('./index');
+const { Saxicon } = require('./index');
 const { getColorKeyword, isColorKeyword } = require('./lib/svgColors');
 const { execSync } = require('child_process');
 const tmp = require('tmp');
@@ -42,7 +42,7 @@ const SASS_ENGINES = {
 };
 
 const testFiles = {
-	basic: walkDirecory('./svgs/basic')
+	basic: walkDirecory(path.join('svgs', 'basic'))
 };
 
 describe('svgColors', () => {
@@ -149,7 +149,7 @@ describe('Saxicon', () => {
 
 		test('Both viewBox and attributes', () => {
 			const results = sax.parse([
-				'./svgs/dimensions/both.svg'
+				path.join('svgs', 'dimensions', 'both.svg')
 			]);
 
 			expect(results.data[0].width).toBe(134);
@@ -158,7 +158,7 @@ describe('Saxicon', () => {
 
 		test('Only viewBox', () => {
 			const results = sax.parse([
-				'./svgs/dimensions/viewbox.svg'
+				path.join('svgs', 'dimensions', 'viewbox.svg')
 			]);
 
 			expect(results.data[0].width).toBe(134);
@@ -167,7 +167,7 @@ describe('Saxicon', () => {
 
 		test('Only attributes', () => {
 			const results = sax.parse([
-				'./svgs/dimensions/attributes.svg'
+				path.join('svgs', 'dimensions', 'attributes.svg')
 			]);
 
 			expect(results.data[0].width).toBe(134);
@@ -176,7 +176,7 @@ describe('Saxicon', () => {
 
 		test('Neither viewBox and attributes', () => {
 			const results = sax.parse([
-				'./svgs/dimensions/none.svg'
+				path.join('svgs', 'dimensions', 'none.svg')
 			]);
 
 			expect(results.data[0].width).toBeNull();
@@ -186,8 +186,8 @@ describe('Saxicon', () => {
 
 	describe('removeInsignificantWhitespace()', () => {
 		test('does remove insignificant whitespace', () => {
-			const input = fs.readFileSync('./svgs/whitespace/whitespace.svg', 'utf8');
-			const correct = fs.readFileSync('./svgs/whitespace/no-whitespace.svg', 'utf8');
+			const input = fs.readFileSync(path.join('svgs', 'whitespace', 'whitespace.svg'), 'utf8');
+			const correct = fs.readFileSync(path.join('svgs', 'whitespace', 'no-whitespace.svg'), 'utf8');
 			const updatedInput = Saxicon.removeInsignificantWhitespace(input);
 			expect(updatedInput).toBe(correct);
 		});
