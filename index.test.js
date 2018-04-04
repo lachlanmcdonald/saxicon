@@ -47,7 +47,7 @@ const testFiles = {
 
 describe('svgColors', () => {
 	describe('getColorKeyword()', () => {
-		test('returns keyword for color', () => {
+		test('Returns keyword for color', () => {
 			expect(getColorKeyword('000')).toBe('black');
 			expect(getColorKeyword('000000')).toBe('black');
 			expect(getColorKeyword('#000000')).toBe('black');
@@ -56,7 +56,7 @@ describe('svgColors', () => {
 			expect(getColorKeyword('#FFF')).toBe('white');
 		});
 
-		test('returns keyword for differnt spelling', () => {
+		test('Returns keyword for differnt spelling', () => {
 			expect(getColorKeyword('0FF')).toBe('cyan');
 			expect(getColorKeyword('2F4F4F')).toBe('darkslategrey');
 			expect(getColorKeyword('696969')).toBe('dimgrey');
@@ -67,7 +67,7 @@ describe('svgColors', () => {
 			expect(getColorKeyword('D3D3D3')).toBe('lightgrey');
 		});
 
-		test('returns the same value for invalid colors', () => {
+		test('Returns the same value for invalid colors', () => {
 			expect(getColorKeyword('123456')).toBe('123456');
 			expect(getColorKeyword(123456)).toBe(123456);
 			expect(getColorKeyword(true)).toBe(true);
@@ -78,7 +78,7 @@ describe('svgColors', () => {
 	});
 
 	describe('isColorKeyword()', () => {
-		test('returns true for valid keywords', () => {
+		test('Returns true for valid keywords', () => {
 			// Keywords in COLOR_LOOKUP
 			expect(isColorKeyword('black')).toBe(true);
 			expect(isColorKeyword('BLACK')).toBe(true);
@@ -94,7 +94,7 @@ describe('svgColors', () => {
 			expect(isColorKeyword('lightgray')).toBe(true);
 		});
 
-		test('does not return true for invaild keywords', () => {
+		test('Does not return true for invaild keywords', () => {
 			expect(isColorKeyword('123456')).toBe(false);
 			expect(isColorKeyword(123456)).toBe(false);
 			expect(isColorKeyword(true)).toBe(false);
@@ -185,14 +185,14 @@ describe('Saxicon', () => {
 	});
 
 	describe('removeInsignificantWhitespace()', () => {
-		test('does remove insignificant whitespace', () => {
+		test('Does remove insignificant whitespace', () => {
 			const input = fs.readFileSync(path.join('svgs', 'whitespace', 'whitespace.svg'), 'utf8');
 			const correct = fs.readFileSync(path.join('svgs', 'whitespace', 'no-whitespace.svg'), 'utf8');
 			const updatedInput = Saxicon.removeInsignificantWhitespace(input);
 			expect(updatedInput).toBe(correct);
 		});
 
-		test('has no side-effects with libxmljs', () => {
+		test('Has no side-effects with libxmljs', () => {
 			testFiles.basic.forEach((filePath) => {
 				const svg = fs.readFileSync(filePath, 'utf8');
 				const doc = libxml.parseXmlString(svg, Saxicon.defaultOptions.parseOptions);
@@ -211,7 +211,7 @@ Object.keys(SASS_ENGINES).forEach((name) => {
 
 	describe('Compiles', () => {
 		describe(name, () => {
-			test('all test inputs with no warnings', () => {
+			test('All test inputs with no warnings', () => {
 				const sax = new Saxicon();
 				const results = sax.parse(testFiles.basic);
 
@@ -228,4 +228,3 @@ Object.keys(SASS_ENGINES).forEach((name) => {
 		});
 	});
 });
-
