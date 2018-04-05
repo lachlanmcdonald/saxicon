@@ -50,7 +50,7 @@ class SaxiconData {
 	}
 
 	static encode(s) {
-		return s.replace(/[^\ \-\.\d\w\=\:\/]/g, escape).replace(/"/g, '\'');
+		return s.replace(/[^\ \-\.\d\w\=\:\/]/g, escape).replace(/"/g, '\'').replace(/%u([a-f0-9]{4})/gi, '%26%23x$1;');
 	}
 }
 
