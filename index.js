@@ -24,6 +24,12 @@ class SaxiconData {
 		return this.data;
 	}
 
+	uri() {
+		return this.data.map(set => {
+			return 'data:image/svg+xml,' + set.components.map(x => SaxiconData.encode(x)).join('');
+		});
+	}
+
 	scss() {
 		let scssUtils = fs.readFileSync('./lib/saxicon.scss', 'utf8'),
 			mapVariable = '$saxicon-map-' + (+new Date()),
