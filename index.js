@@ -31,7 +31,7 @@ class SaxiconData {
 
 		this.data.forEach((set) => {
 			set.svg = set.components.map(x => {
-				return isColorKeyword(x) ? x : ('"' + Saxicon.encode(x) + '"');
+				return isColorKeyword(x) ? x : ('"' + SaxiconData.encode(x) + '"');
 			}).join(', ');
 
 			map.push('"' + set.iconName + '": (' + set.width + ', ' + set.height + ', (' + set.svg + '))');
@@ -48,15 +48,15 @@ class SaxiconData {
 
 		return `${scssUtils}\n${map}`;
 	}
+
+	static encode(s) {
+		return s.replace(/[^\ \-\.\d\w\=\:\/]/g, escape).replace(/"/g, '\'');
+	}
 }
 
 class Saxicon {
 	constructor(options = {}) {
 		this.options = Object.assign(Saxicon.defaultOptions, options);
-	}
-
-	static encode(s) {
-		return s.replace(/[^\ \-\.\d\w\=\:\/]/g, escape).replace(/"/g, '\'');
 	}
 
 	static removeInsignificantWhitespace(doc) {
