@@ -74,10 +74,15 @@ class Saxicon {
 	}
 
 	parseFile(svgPath) {
-		const source = fs.readFileSync(svgPath, 'utf8');
-		let width = null,
+		let source = fs.readFileSync(svgPath, 'utf8'),
+			width = null,
 			height = null,
 			doc = null;
+
+		// Strip byte-order mark
+		if (source.charCodeAt(0) === 0xfeff) {
+			source = source.slice(1);
+		}
 
 		try {
 			doc = libxml.parseXmlString(source, this.options.parseOptions);
