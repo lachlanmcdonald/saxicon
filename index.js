@@ -83,6 +83,7 @@ class Saxicon {
 		let source = fs.readFileSync(svgPath, 'utf8'),
 			width = null,
 			height = null,
+			rootNode = null,
 			doc = null;
 
 		// Strip byte-order mark
@@ -92,6 +93,7 @@ class Saxicon {
 
 		try {
 			doc = libxml.parseXmlString(source, this.options.parseOptions);
+			rootNode = doc.root();
 		} catch (e) {
 			return {
 				path: svgPath,
@@ -104,9 +106,9 @@ class Saxicon {
 		}
 
 		// Document size
-		const widthAttribute = doc.root().attr('width');
-		const heightAttribute = doc.root().attr('height');
-		const viewBoxAttribute = doc.root().attr('viewBox');
+		const widthAttribute = rootNode.attr('width');
+		const heightAttribute = rootNode.attr('height');
+		const viewBoxAttribute = rootNode.attr('viewBox');
 
 		if (widthAttribute !== null && heightAttribute !== null) {
 			width = parseFloat(widthAttribute.value());
@@ -118,7 +120,7 @@ class Saxicon {
 		}
 
 		// Walk nodes
-		this.walkChildNodes(doc.root());
+		this.walkChildNodes(rootNode);
 
 		// libxml adds in the XML declaration, which needs to be removed for SVGs
 		const version = doc.version();
@@ -137,13 +139,13 @@ class Saxicon {
 		docString = Saxicon.removeInsignificantWhitespace(docString);
 
 		return {
+			components: docString.split(COLOR_SPLIT_KEY),
+			iconName: this.options.iconName(svgPath),
 			path: svgPath,
 			warnings: warnings,
 			errors: [],
-			iconName: this.options.iconName(svgPath),
 			width: width,
-			height: height,
-			components: docString.split(COLOR_SPLIT_KEY)
+			height: height
 		};
 	}
 
