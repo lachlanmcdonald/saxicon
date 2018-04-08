@@ -134,6 +134,23 @@ class Saxicon {
 		const version = doc.version();
 		let docString = doc.toString().replace(Saxicon.getXMLDeclarationString(version), '');
 
+		// Check if xlink:href is used, otherwise, remove xlink:xmlns
+		const removeNamespace = [].concat(this.options.removeNamespaces);
+		if (docString.indexOf(' xlink:href=') === -1) {
+			removeNamespace.push('xmlns:xlink');
+		}
+
+		// Remove the namespace from the resulting string
+		rootNode.namespaces().forEach(ns => {
+			const prefix = ns.prefix() ? `:${ns.prefix()}` : '';
+			const attribute = `xmlns${prefix}`;
+
+			if (removeNamespace.includes(attribute)) {
+				const str = ` ${attribute}="${ns.href()}"`;
+				docString = docString.replace(str, '');
+			}
+		});
+
 		// Treat recoverable errors as warnings
 		let warnings = doc.errors.map((e) => {
 			return {
@@ -213,6 +230,7 @@ Saxicon.defaultOptions = {
 	replaceColors: true,
 	restrict: [],
 	ignore: [],
+	removeNamespaces: [],
 	removeVersion: true,
 	parseOptions: {
 		ignore_enc: true,
