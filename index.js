@@ -122,6 +122,14 @@ class Saxicon {
 		// Walk nodes
 		this.walkChildNodes(rootNode);
 
+		// Remove the version attribute
+		if (this.options.removeVersion === true) {
+			const versionAttribute = rootNode.attr('version');
+			if (versionAttribute) {
+				versionAttribute.remove();
+			}
+		}
+
 		// libxml adds in the XML declaration, which needs to be removed for SVGs
 		const version = doc.version();
 		let docString = doc.toString().replace(Saxicon.getXMLDeclarationString(version), '');
@@ -205,6 +213,7 @@ Saxicon.defaultOptions = {
 	replaceColors: true,
 	restrict: [],
 	ignore: [],
+	removeVersion: true,
 	parseOptions: {
 		ignore_enc: true,
 		noxincnode: true,
