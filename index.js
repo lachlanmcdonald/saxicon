@@ -20,10 +20,6 @@ class SaxiconData {
 		this.data = data;
 	}
 
-	data() {
-		return this.data;
-	}
-
 	uri() {
 		return this.data.map(set => {
 			return 'data:image/svg+xml,' + set.components.map(x => SaxiconData.encode(x)).join('');
@@ -196,19 +192,25 @@ class Saxicon {
 				let fillValue = (fillAttribute === null ? null : fillAttribute.value());
 				let strokeValue = (strokeAttribute === null ? null : strokeAttribute.value());
 
-				if (fillValue !== null && fillValue !== 'none') {
+				if (fillAttribute === null) {
+					fillValue = 'black';
+				}
+
+				if (fillValue !== 'none') {
 					if (this.options.replaceColors === true) {
 						fillValue = getColorKeyword(fillValue);
 					}
 
 					if (isColorKeyword(fillValue)) {
 						if (this.allowedReplacement(fillValue)) {
-							fillAttribute.value(COLOR_SPLIT_KEY + fillValue + COLOR_SPLIT_KEY);
+							node.attr({
+								fill: COLOR_SPLIT_KEY + fillValue + COLOR_SPLIT_KEY
+							});
 						}
 					}
 				}
 
-				if (strokeValue !== null && strokeValue !== 'none') {
+				if (strokeAttribute !== null && strokeValue !== 'none') {
 					if (this.options.replaceColors === true) {
 						strokeValue = getColorKeyword(strokeValue);
 					}
