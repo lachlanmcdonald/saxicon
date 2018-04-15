@@ -12,12 +12,12 @@ const fs = require('fs');
 const libxml = require('libxmljs');
 const {getColorKeyword, isColorKeyword} = require('./lib/svgColors');
 
-const SAFE_TAGS = ['rect', 'circle', 'ellipse', 'line', 'polyline', 'polygon', 'path'];
 const COLOR_SPLIT_KEY = '__saxicon__';
 
 class SaxiconData {
-	constructor(data) {
+	constructor(data, options = {}) {
 		this.data = data;
+		this.options = options;
 	}
 
 	uri() {
@@ -70,9 +70,11 @@ class Saxicon {
 	}
 
 	parse(paths) {
-		return new SaxiconData(paths.map((svgPath) => {
+		const data = paths.map((svgPath) => {
 			return this.parseFile(svgPath);
-		}));
+		});
+
+		return new SaxiconData(data, this.options);
 	}
 
 	parseFile(svgPath) {
@@ -185,8 +187,9 @@ class Saxicon {
 
 		for (let i = 0; i < children.length; i++) {
 			const node = children[i];
+			const nodeName = node.name();
 
-			if (SAFE_TAGS.includes(node.name())) {
+			if (this.options.tags.includes(nodeName) && this.options.skipTags.includes(nodeName) === false) {
 				const fillAttribute = node.attr('fill');
 				const strokeAttribute = node.attr('stroke');
 				let fillValue = (fillAttribute === null ? null : fillAttribute.value());
@@ -223,7 +226,9 @@ class Saxicon {
 				}
 			}
 
-			this.walkChildNodes(node);
+			if (this.options.skipTags.includes(nodeName) === false) {
+				this.walkChildNodes(node);
+			}
 		}
 	}
 }
@@ -234,6 +239,8 @@ Saxicon.defaultOptions = {
 	ignore: [],
 	removeNamespaces: [],
 	removeVersion: true,
+	tags: ['rect', 'circle', 'ellipse', 'line', 'polyline', 'polygon', 'path'],
+	skipTags: ['mask'],
 	parseOptions: {
 		ignore_enc: true,
 		noxincnode: true,
