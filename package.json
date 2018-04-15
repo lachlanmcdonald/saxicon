@@ -24,8 +24,8 @@
   ],
   "testConfig": {
     "engines": {
-      "sassc": "sassc",
-      "Ruby": "sass --no-cache"
+      "sassc": "sassc --style compact",
+      "Ruby": "sass --style compact --no-cache"
     }
   },
   "eslintConfig": {
