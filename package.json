@@ -22,6 +22,12 @@
   "files": [
     "index.js"
   ],
+  "testConfig": {
+    "engines": {
+      "sassc": "sassc",
+      "Ruby": "sass --no-cache"
+    }
+  },
   "eslintConfig": {
     "env": {
       "jest": true

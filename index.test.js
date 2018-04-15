@@ -10,6 +10,7 @@
 const { Saxicon } = require('./index');
 const { getColorKeyword, isColorKeyword } = require('./lib/svgColors');
 const { execSync } = require('child_process');
+const { testConfig } = require('./package.json');
 const tmp = require('tmp');
 const fs = require('fs');
 const path = require('path');
@@ -34,11 +35,6 @@ const walkDirecory = (dir, results) => {
 	});
 
 	return results;
-};
-
-const SASS_ENGINES = {
-	sassc: 'sassc',
-	Ruby: 'sass --no-cache'
 };
 
 const TEST_FILES = {
@@ -210,8 +206,8 @@ describe('Saxicon', () => {
 	});
 });
 
-Object.keys(SASS_ENGINES).forEach((name) => {
-	const command = SASS_ENGINES[name];
+Object.keys(testConfig.engines).forEach((name) => {
+	const command = testConfig.engines[name];
 
 	describe('Compiles', () => {
 		describe(name, () => {
