@@ -1,0 +1,11 @@
+<svg height="80" version="1.1" viewBox="0 0 200 80" width="200" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<defs>
+		<mask height="80" id="mask" maskUnits="userSpaceOnUse" width="200" x="0" y="0">
+			<rect fill="white" height="80" width="100" x="0" y="0"/>
+		</mask>
+		<text font-size="26" font-weight="bold" id="copy" text-anchor="middle" x="100" y="48">Black &amp; White</text>
+	</defs>
+	<rect height="60" width="95" x="100" y="10"/>
+	<use fill="white" xlink:href="#copy"/>
+	<use fill="black" mask="url(#mask)" xlink:href="#copy"/>
+</svg>

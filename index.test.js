@@ -41,8 +41,12 @@ const SASS_ENGINES = {
 	Ruby: 'sass --no-cache'
 };
 
-const testFiles = {
-	basic: walkDirecory(path.join('svgs', 'basic'))
+const TEST_FILES = {
+	basic: walkDirecory(path.join('svgs', 'basic')),
+	blend: walkDirecory(path.join('svgs', 'blend')),
+	gradient: walkDirecory(path.join('svgs', 'gradient')),
+	mask: walkDirecory(path.join('svgs', 'mask')),
+	utf8: walkDirecory(path.join('svgs', 'utf8'))
 };
 
 describe('svgColors', () => {
@@ -193,7 +197,7 @@ describe('Saxicon', () => {
 		});
 
 		test('Has no side-effects with libxmljs', () => {
-			testFiles.basic.forEach((filePath) => {
+			TEST_FILES.basic.forEach((filePath) => {
 				const svg = fs.readFileSync(filePath, 'utf8');
 				const doc = libxml.parseXmlString(svg, Saxicon.defaultOptions.parseOptions);
 
@@ -211,9 +215,15 @@ Object.keys(SASS_ENGINES).forEach((name) => {
 
 	describe('Compiles', () => {
 		describe(name, () => {
-			test('All test inputs with no warnings', () => {
+			test('All inputs are processed with no warnings', () => {
 				const sax = new Saxicon();
-				const results = sax.parse(testFiles.basic);
+				const results = sax.parse([
+					...TEST_FILES.basic,
+					...TEST_FILES.blend,
+					...TEST_FILES.gradient,
+					...TEST_FILES.mask,
+					...TEST_FILES.utf8
+				]);
 
 				for (var i = 0; i < results.data.length; i++) {
 					expect(results.data[i].warnings).toHaveLength(0);

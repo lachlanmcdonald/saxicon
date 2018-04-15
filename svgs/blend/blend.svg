@@ -1,0 +1,13 @@
+<svg height="600px" viewbox="0 0 600 600" width="600" xmlns="http://www.w3.org/2000/svg">
+	<defs>
+		<filter height="400%" id="t" width="400%" x="-150%" y="-150%">
+			<feOffset dx="-70" dy="-120" in="SourceGraphic" result="a"/>
+			<feColorMatrix in="a" result="r" type="hueRotate" values="120"/>
+			<feOffset dx="70" dy="-120" in="SourceGraphic" result="b"/>
+			<feColorMatrix in="b" result="blue" type="hueRotate" values="240"/>
+			<feBlend in="r" in2="blue" mode="screen" result="m"/>
+			<feBlend in="m" in2="SourceGraphic" mode="screen"/>
+		</filter>
+	</defs>
+	<circle cx="200" cy="250" fill="red" filter="url(#t)" r="100"/>
+</svg>
