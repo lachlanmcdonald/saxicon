@@ -1,5 +1,15 @@
+/*
+ * saxicon 0.0.1
+ * Copyright (c) 2018 Lachlan McDonald
+ * https://github.com/lachlanmcdonald/saxicon/
+ *
+ * Licensed under the BSD 3-Clause license.
+ */
+'use strict';
+
 const { Saxicon } = require('./index');
 const { execSync } = require('child_process');
+const { testConfig } = require('./package.json');
 const tmp = require('tmp');
 const fs = require('fs');
 const path = require('path');
@@ -10,7 +20,7 @@ const walkDirecory = (dir, results) => {
 	}
 
 	fs.readdirSync(dir).forEach((fileName) => {
-		var filePath = path.join(dir, fileName),
+		let filePath = path.join(dir, fileName),
 			stats = fs.statSync(filePath);
 
 		if (stats.isDirectory()) {
@@ -25,7 +35,7 @@ const walkDirecory = (dir, results) => {
 	return results;
 };
 
-const files = [];
+const tests = [];
 
 fs.readdirSync('svgs').forEach((fileName) => {
 	const fullPath = path.join('svgs', fileName);
@@ -34,9 +44,9 @@ fs.readdirSync('svgs').forEach((fileName) => {
 
 	if (stats.isFile()) {
 		if (path.extname(fileName) === '.scss') {
-			files.push({
+			tests.push({
 				path: fullPath,
-				output: path.join('tests', `${baseName}.html`),
+				baseName: baseName,
 				html: path.join('svgs', `${baseName}.html`),
 				files: walkDirecory(path.join('svgs', baseName))
 			});
@@ -44,8 +54,7 @@ fs.readdirSync('svgs').forEach((fileName) => {
 	}
 });
 
-for (var i = 0; i < files.length; i++) {
-	const test = files[i];
+tests.forEach((test) => {
 	const sax = new Saxicon();
 	const results = sax.parse(test.files);
 
@@ -55,16 +64,28 @@ for (var i = 0; i < files.length; i++) {
 		${fs.readFileSync(test.path)}
 	`);
 
-	const output = execSync(`sassc "${tempFile.name}"`);
-	const html = fs.readFileSync(test.html);
+	Object.keys(testConfig.engines).forEach((engine) => {
+		const command = testConfig.engines[engine];
+		const output = execSync(`${command} "${tempFile.name}"`);
+		const html = fs.readFileSync(test.html);
+		const outputDir = path.join('tests', engine);
 
-	try {
-		fs.mkdirSync('tests');
-	} catch (e) {
-		if (e.code !== 'EEXIST') {
-			throw e;
+		try {
+			fs.mkdirSync('tests');
+		} catch (e) {
+			if (e.code !== 'EEXIST') {
+				throw e;
+			}
 		}
-	}
 
-	fs.writeFileSync(test.output, html.toString().replace('%STYLE%', output.toString()));
-}
+		try {
+			fs.mkdirSync(outputDir);
+		} catch (e) {
+			if (e.code !== 'EEXIST') {
+				throw e;
+			}
+		}
+
+		fs.writeFileSync(path.join(outputDir, `${test.baseName}.html`), html.toString().replace('%STYLE%', output.toString()));
+	});
+});
