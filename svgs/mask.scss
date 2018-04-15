@@ -1,4 +1,3 @@
 .clipPath { background-image: sax(clipPath, magenta); }
-.mask { background-image: sax(mask, magenta); }
+.mask { background-image: sax(mask, $blue: red, $red: purple, $yellow: magenta); }
 .mask2 { background-image: sax(mask2, $blue: red, $cyan: magenta); }
-.mask3 { background-image: sax(mask3, $blue: purple, $red: white, $yellow: magenta); }
