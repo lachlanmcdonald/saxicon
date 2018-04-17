@@ -28,7 +28,7 @@ class SaxiconData {
 
 	scss() {
 		let scssUtils = fs.readFileSync('./lib/saxicon.scss', 'utf8'),
-			mapVariable = '$saxicon-map-' + (+new Date()),
+			mapVariable = `$saxicon-map-${+new Date()}`,
 			map = [];
 
 		this.data.forEach((set) => {
@@ -39,16 +39,14 @@ class SaxiconData {
 			map.push('"' + set.iconName + '": (' + set.width + ', ' + set.height + ', (' + set.svg + '))');
 		});
 
-		map = [
-			mapVariable + ': (' + map.join(',\n') + ');\n',
-			'@if (variable_exists(saxicon-map)) {',
-			'	$saxicon-map: map_merge($saxicon-map, ' + mapVariable + ') !global;',
-			'} @else {',
-			'	$saxicon-map: ' + mapVariable + ' !global;',
-			'}'
-		].join('\n');
-
-		return `${scssUtils}\n${map}`;
+		return `${scssUtils}
+			${mapVariable}: (${map.join(',\n')});
+			@if (variable_exists(saxicon-map)) {
+				$saxicon-map: map_merge($saxicon-map, ${mapVariable}) !global;
+			} @else {
+				$saxicon-map: ${mapVariable} !global;
+			}
+		`;
 	}
 
 	static encode(s) {
