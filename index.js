@@ -182,35 +182,40 @@ class Saxicon {
 		}
 	}
 
-	walkChildNodes(node) {
+	walkChildNodes(node, inherited = null) {
 		const children = node.childNodes();
+
+		if (inherited === null) {
+			inherited = {
+				fill: null,
+				stroke: null
+			};
+		}
 
 		for (let i = 0; i < children.length; i++) {
 			const node = children[i];
 			const nodeName = node.name();
+			const ignored = this.options.ignoreTags.includes(nodeName);
+			const includeTag = this.options.presentationTags.includes(nodeName) && ignored === false;
+			const structuralTag = this.options.structuralTags.includes(nodeName) && ignored === false;
+
+			let fillValue = inherited.fill;
+			let strokeValue = inherited.stroke;
 
 			if (node.type() === 'element') {
-				if (this.options.tags.includes(nodeName) && this.options.skipTags.includes(nodeName) === false) {
+				if (includeTag || structuralTag) {
 					const fillAttribute = node.attr('fill');
 					const strokeAttribute = node.attr('stroke');
-					let fillValue = (fillAttribute === null ? null : fillAttribute.value());
-					let strokeValue = (strokeAttribute === null ? null : strokeAttribute.value());
+					fillValue = (fillAttribute === null ? fillValue : fillAttribute.value());
+					strokeValue = (strokeAttribute === null ? strokeValue : strokeAttribute.value());
 
-					if (fillAttribute === null) {
-						fillValue = 'black';
+					if (structuralTag === false && fillAttribute === null) {
+						fillValue = fillValue || 'black';
 					}
 
 					if (fillValue !== 'none') {
 						if (this.options.replaceColors === true) {
 							fillValue = getColorKeyword(fillValue);
-						}
-
-						if (isColorKeyword(fillValue)) {
-							if (this.allowedReplacement(fillValue)) {
-								node.attr({
-									fill: COLOR_SPLIT_KEY + fillValue + COLOR_SPLIT_KEY
-								});
-							}
 						}
 					}
 
@@ -218,17 +223,32 @@ class Saxicon {
 						if (this.options.replaceColors === true) {
 							strokeValue = getColorKeyword(strokeValue);
 						}
+					}
+				}
 
-						if (isColorKeyword(strokeValue)) {
-							if (this.allowedReplacement(strokeValue)) {
-								strokeAttribute.value(COLOR_SPLIT_KEY + strokeValue + COLOR_SPLIT_KEY);
-							}
+				if (includeTag) {
+					if (isColorKeyword(fillValue)) {
+						if (this.allowedReplacement(fillValue)) {
+							node.attr({
+								fill: COLOR_SPLIT_KEY + fillValue + COLOR_SPLIT_KEY
+							});
+						}
+					}
+
+					if (isColorKeyword(strokeValue)) {
+						if (this.allowedReplacement(strokeValue)) {
+							node.attr({
+								stroke: COLOR_SPLIT_KEY + strokeValue + COLOR_SPLIT_KEY
+							});
 						}
 					}
 				}
 
-				if (this.options.skipTags.includes(nodeName) === false) {
-					this.walkChildNodes(node);
+				if (!ignored) {
+					this.walkChildNodes(node, {
+						fill: fillValue,
+						stroke: strokeValue
+					});
 				}
 			}
 		}
@@ -241,8 +261,9 @@ Saxicon.defaultOptions = {
 	ignore: [],
 	removeNamespaces: [],
 	removeVersion: true,
-	tags: ['rect', 'circle', 'text', 'ellipse', 'line', 'polyline', 'polygon', 'path'],
-	skipTags: ['mask'],
+	presentationTags: ['rect', 'circle', 'text', 'ellipse', 'line', 'polyline', 'polygon', 'path'],
+	structuralTags: ['g'],
+	ignoreTags: ['mask'],
 	parseOptions: {
 		ignore_enc: true,
 		noxincnode: true,
