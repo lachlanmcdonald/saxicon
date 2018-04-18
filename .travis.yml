@@ -1,0 +1,10 @@
+os:
+  - osx
+osx_image: xcode8.1
+language: node_js
+node_js:
+  - "0.10"
+before_script:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install sassc ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; brew install --devel sass/sass/sass ; fi
