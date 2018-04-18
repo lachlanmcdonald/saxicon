@@ -2,7 +2,8 @@ os:
   - osx
 language: node_js
 node_js:
-  - "0.10"
+  - "node"
+  - "lts/*"
 before_script:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install sassc ; fi
