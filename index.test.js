@@ -196,11 +196,11 @@ describe('Saxicon', () => {
 		});
 	});
 
-	describe('removeInsignificantWhitespace()', () => {
+	describe('removeWhitespace()', () => {
 		test('Does remove insignificant whitespace', () => {
 			const input = fs.readFileSync(path.join('svgs', 'whitespace', 'whitespace.svg'), 'utf8');
 			const correct = fs.readFileSync(path.join('svgs', 'whitespace', 'no-whitespace.svg'), 'utf8');
-			const updatedInput = Saxicon.removeInsignificantWhitespace(input);
+			const updatedInput = Saxicon.removeWhitespace(input);
 			expect(updatedInput).toBe(correct);
 		});
 
@@ -209,7 +209,7 @@ describe('Saxicon', () => {
 				const svg = fs.readFileSync(filePath, 'utf8');
 				const doc = libxml.parseXmlString(svg, Saxicon.defaultOptions.parseOptions);
 
-				const updatedSvg = Saxicon.removeInsignificantWhitespace(doc.toString());
+				const updatedSvg = Saxicon.removeWhitespace(doc.toString());
 				const updatedDoc = libxml.parseXmlString(updatedSvg, Saxicon.defaultOptions.parseOptions);
 
 				expect(doc.toString()).toBe(updatedDoc.toString());

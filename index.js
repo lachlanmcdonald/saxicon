@@ -59,7 +59,7 @@ class Saxicon {
 		this.options = Object.assign(Saxicon.defaultOptions, options);
 	}
 
-	static removeInsignificantWhitespace(doc) {
+	static removeWhitespace(doc) {
 		return doc.replace(/>[\r\n\t ]+</g, '><').trim();
 	}
 
@@ -166,7 +166,7 @@ class Saxicon {
 		});
 
 		// Remove insignificant whitespace
-		docString = Saxicon.removeInsignificantWhitespace(docString);
+		docString = Saxicon.removeWhitespace(docString);
 
 		return {
 			components: docString.split(COLOR_SPLIT_KEY),
