@@ -25,7 +25,7 @@
   "testConfig": {
     "engines": {
       "sassc": "sassc --style compact",
-      "Ruby": "sass --style compact --no-cache"
+      "Dart Sass": "sass --style compact --no-cache"
     }
   },
   "eslintConfig": {
