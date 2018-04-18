@@ -76,11 +76,20 @@ class Saxicon {
 	}
 
 	parseFileSync(svgPath) {
-		let source = fs.readFileSync(svgPath, 'utf8'),
-			width = null,
+		let width = null,
 			height = null,
 			rootNode = null,
-			doc = null;
+			doc = null,
+			source;
+
+		try {
+			source = fs.readFileSync(svgPath, 'utf8');
+		} catch (e) {
+			return {
+				path: svgPath,
+				errors: [e]
+			};
+		}
 
 		// Strip byte-order mark
 		if (source.charCodeAt(0) === 0xfeff) {

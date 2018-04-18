@@ -106,6 +106,18 @@ describe('svgColors', () => {
 });
 
 describe('Saxicon', () => {
+	describe('parse()', () => {
+		test('Catches ENOENT errors', () => {
+			const sax = new Saxicon();
+			const results = sax.parseSync([
+				'filedoesntexist.svg'
+			]);
+
+			expect(results.exportable).toHaveLength(0);
+			expect(results.errors).toHaveLength(1);
+		});
+	});
+
 	describe('XML Declarations', () => {
 		test('Omitted XML declaration does not return errors or warnings', () => {
 			const sax = new Saxicon();
