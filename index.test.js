@@ -109,7 +109,7 @@ describe('Saxicon', () => {
 	describe('XML Declarations', () => {
 		test('Omitted XML declaration does not return errors or warnings', () => {
 			const sax = new Saxicon();
-			const results = sax.parse([
+			const results = sax.parseSync([
 				path.join('svgs', 'xmldeclaration', 'xmldeclaration10.svg')
 			]);
 
@@ -121,7 +121,7 @@ describe('Saxicon', () => {
 
 		test('XML version 1.0 does not return errors or warnings', () => {
 			const sax = new Saxicon();
-			const results = sax.parse([
+			const results = sax.parseSync([
 				path.join('svgs', 'xmldeclaration', 'xmldeclaration10.svg')
 			]);
 
@@ -133,7 +133,7 @@ describe('Saxicon', () => {
 
 		test('XML version 1.1 returns a warning', () => {
 			const sax = new Saxicon();
-			const results = sax.parse([
+			const results = sax.parseSync([
 				path.join('svgs', 'xmldeclaration', 'xmldeclaration11.svg')
 			]);
 
@@ -148,7 +148,7 @@ describe('Saxicon', () => {
 		const sax = new Saxicon();
 
 		test('Both viewBox and attributes', () => {
-			const results = sax.parse([
+			const results = sax.parseSync([
 				path.join('svgs', 'dimensions', 'both.svg')
 			]);
 
@@ -157,7 +157,7 @@ describe('Saxicon', () => {
 		});
 
 		test('Only viewBox', () => {
-			const results = sax.parse([
+			const results = sax.parseSync([
 				path.join('svgs', 'dimensions', 'viewbox.svg')
 			]);
 
@@ -166,7 +166,7 @@ describe('Saxicon', () => {
 		});
 
 		test('Only attributes', () => {
-			const results = sax.parse([
+			const results = sax.parseSync([
 				path.join('svgs', 'dimensions', 'attributes.svg')
 			]);
 
@@ -175,7 +175,7 @@ describe('Saxicon', () => {
 		});
 
 		test('Neither viewBox and attributes', () => {
-			const results = sax.parse([
+			const results = sax.parseSync([
 				path.join('svgs', 'dimensions', 'none.svg')
 			]);
 
@@ -213,7 +213,7 @@ Object.keys(testConfig.engines).forEach((name) => {
 		describe(name, () => {
 			test('All inputs are processed with no warnings', () => {
 				const sax = new Saxicon();
-				const results = sax.parse([
+				const results = sax.parseSync([
 					...TEST_FILES.basic,
 					...TEST_FILES.blend,
 					...TEST_FILES.gradient,

@@ -67,15 +67,15 @@ class Saxicon {
 		return (new libxml.Document(version, encoding)).toString();
 	}
 
-	parse(paths) {
+	parseSync(paths) {
 		const data = paths.map((svgPath) => {
-			return this.parseFile(svgPath);
+			return this.parseFileSync(svgPath);
 		});
 
 		return new SaxiconData(data, this.options);
 	}
 
-	parseFile(svgPath) {
+	parseFileSync(svgPath) {
 		let source = fs.readFileSync(svgPath, 'utf8'),
 			width = null,
 			height = null,
