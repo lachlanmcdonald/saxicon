@@ -20,6 +20,14 @@ class SaxiconData {
 		this.options = options;
 	}
 
+	get errors() {
+		return this.data.filter(x => x.errors.length > 0);
+	}
+
+	get exportable() {
+		return this.data.filter(x => x.errors.length === 0);
+	}
+
 	uri() {
 		return this.data.map(set => {
 			return 'data:image/svg+xml,' + set.components.map(x => SaxiconData.encode(x)).join('');
@@ -31,7 +39,7 @@ class SaxiconData {
 			mapVariable = `$saxicon-map-${+new Date()}`,
 			map = [];
 
-		this.data.forEach((set) => {
+		this.exportable.forEach((set) => {
 			set.svg = set.components.map(x => {
 				return isColorKeyword(x) ? x : ('"' + SaxiconData.encode(x) + '"');
 			}).join(', ');
