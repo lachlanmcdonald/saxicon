@@ -56,7 +56,7 @@ fs.readdirSync('svgs').forEach((fileName) => {
 
 tests.forEach((test) => {
 	const sax = new Saxicon();
-	const results = sax.parse(test.files);
+	const results = sax.parseSync(test.files);
 
 	const tempFile = tmp.fileSync({postfix: '.scss'});
 	fs.writeSync(tempFile.fd, `
