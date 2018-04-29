@@ -106,6 +106,78 @@ describe('svgColors', () => {
 });
 
 describe('Saxicon', () => {
+	describe('constructor()', () => {
+		describe('Throws on invalid input', () => {
+			const OPTION_TESTS = {};
+
+			const REVERSE_TYPES = {
+				boolean: null,
+				function: null,
+				number: null,
+				object: 1,
+				string: 1,
+				symbol: null,
+				undefined: 1
+			};
+
+			Saxicon.validateOptions().forEach(optionTest => {
+				const [type, args] = optionTest;
+
+				if (OPTION_TESTS.hasOwnProperty(args[1]) === false) {
+					OPTION_TESTS[args[1]] = [];
+				}
+
+				OPTION_TESTS[args[1]].push([type, args.slice(2)]);
+			});
+
+			for (let property in OPTION_TESTS) {
+				if (OPTION_TESTS.hasOwnProperty(property)) {
+					test(property, () => {
+						OPTION_TESTS[property].forEach((x) => {
+							const [fn, args] = x;
+
+							if (['isBoolean', 'isFunction', 'isArray'].includes(fn)) {
+								expect(() => {
+									new Saxicon({
+										[property]: null
+									});
+								}).toThrow();
+							} else if (fn === 'isObject') {
+								expect(() => {
+									new Saxicon({
+										[property]: []
+									});
+								}).toThrow();
+							} else if (fn === 'isNotEmpty') {
+								expect(() => {
+									new Saxicon({
+										[property]: []
+									});
+								}).toThrow();
+							} else if (fn === 'isArrayOf') {
+								expect(() => {
+									new Saxicon({
+										[property]: [REVERSE_TYPES[args[0]]]
+									});
+								}).toThrow();
+							} else if (fn === 'functionReturnsType') {
+								const erroneousFunction = () => {
+									return REVERSE_TYPES[args[1]];
+								};
+
+								expect(() => {
+									new Saxicon({
+										[property]: erroneousFunction
+									});
+								}).toThrow();
+							}
+						});
+					});
+				}
+			}
+		});
+	});
+
 	describe('parse()', () => {
 		test('Catches ENOENT errors', () => {
 			const sax = new Saxicon();
