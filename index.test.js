@@ -8,7 +8,7 @@
 'use strict';
 
 const { Saxicon } = require('./index');
-const { getColorKeyword, isColorKeyword } = require('./lib/svgColors');
+const { getColorKeyword, isColorKeyword } = require('./lib/Colors');
 const { execSync } = require('child_process');
 const { testConfig } = require('./package.json');
 const tmp = require('tmp');

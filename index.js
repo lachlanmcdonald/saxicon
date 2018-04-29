@@ -10,7 +10,7 @@
 const path = require('path');
 const fs = require('fs');
 const libxml = require('libxmljs');
-const {getColorKeyword, isColorKeyword} = require('./lib/svgColors');
+const {getColorKeyword, isColorKeyword} = require('./lib/Colors');
 
 const COLOR_SPLIT_KEY = '__saxicon__';
 
