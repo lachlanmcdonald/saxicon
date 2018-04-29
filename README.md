@@ -61,7 +61,7 @@ Then in your SCSS:
 Will compile to:
 
 ```css
-.red-arrow {
+.icon1 {
     background-image: url("data:image/svg+xml,...");
 }
 ```
