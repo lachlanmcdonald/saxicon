@@ -77,13 +77,11 @@ class Saxicon {
 		x.functionReturnsType(o, 'iconName', ['test'], 'string');
 		x.isArrayOf(o, 'restrict', 'string');
 		x.isArrayOf(o, 'ignore', 'string');
-		x.isArrayOf(o, 'removeNamespaces', 'string');
 		x.isArrayOf(o, 'presentationTags', 'string');
 		x.isArrayOf(o, 'structuralTags', 'string');
 		x.isArrayOf(o, 'ignoreTags', 'string');
 		x.isNotEmpty(o, 'presentationTags');
 		x.isNotEmpty(o, 'structuralTags');
-		x.isObject(o, 'parseOptions');
 		return x.tests;
 	}
 
@@ -256,23 +254,10 @@ Saxicon.defaultOptions = {
 	replaceColors: true,
 	restrict: [],
 	ignore: [],
-	removeNamespaces: [],
 	removeVersion: true,
 	presentationTags: ['rect', 'circle', 'text', 'ellipse', 'line', 'polyline', 'polygon', 'path'],
 	structuralTags: ['g'],
 	ignoreTags: ['mask'],
-	parseOptions: {
-		ignore_enc: true,
-		noxincnode: true,
-		cdata: true,
-		implied: true,
-		nsclean: true,
-		recover: true,
-		noent: true,
-		doctype: true,
-		noblanks: true,
-		nonet: true
-	},
 	iconName: (sourcePath) => {
 		return path.basename(sourcePath).split('.')[0].trim();
 	}
