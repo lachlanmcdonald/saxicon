@@ -43,7 +43,8 @@
     "datauri"
   ],
   "dependencies": {
-    "jsdom": "^11.10.0"
+    "jsdom": "^11.10.0",
+    "object.values": "github:es-shims/Object.values"
   },
   "devDependencies": {
     "eslint": "^3.10.2",
