@@ -5,7 +5,7 @@
 
 > The **saxicon** module transforms SVGs into a SASS snippet that allows you to generate colorized SVGs (with both single or multi-colored shapes) within SASS, with each SVG embedded as a data-URI.
 
-🌱 *This is a beta release, use with care!*
+🚫 *This module relies on [libxmljs](https://github.com/libxmljs/libxmljs), which appears to no longer be maintained and will not work Node > 8.x.*
 
 Saxicon is useful when you want to:
 
