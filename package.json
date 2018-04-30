@@ -20,6 +20,7 @@
     "test": "jest"
   },
   "files": [
+    "lib/*",
     "index.js"
   ],
   "testConfig": {
