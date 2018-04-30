@@ -2,6 +2,12 @@ os:
   - osx
 language: node_js
 node_js:
+  - "10"
+  - "9"
+  - "8"
+  - "7"
+  - "5"
+  - "4"
   - "node"
   - "lts/*"
 before_script:
