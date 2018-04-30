@@ -9,9 +9,9 @@
 
 const path = require('path');
 const fs = require('fs');
-const libxml = require('libxmljs');
-const {TypeTest} = require('./lib/TypeTest');
-const {getColorKeyword, isColorKeyword} = require('./lib/Colors');
+const { JSDOM } = require('jsdom');
+const { TypeTest } = require('./lib/TypeTest');
+const { getColorKeyword, isColorKeyword } = require('./lib/Colors');
 
 const COLOR_SPLIT_KEY = '__saxicon__';
 
@@ -65,8 +65,7 @@ class SaxiconData {
 
 class Saxicon {
 	constructor(options = {}) {
-		// Check options and throw if any do not match the
-		// expect values
+		// Check options and throw if any do not match the expect values
 		Saxicon.validateOptions(options);
 		this.options = Object.assign(Saxicon.defaultOptions, options);
 	}
@@ -92,10 +91,6 @@ class Saxicon {
 		return doc.replace(/>[\r\n\t ]+</g, '><').trim();
 	}
 
-	static getXMLDeclarationString(version = '1.0', encoding = 'utf8') {
-		return (new libxml.Document(version, encoding)).toString();
-	}
-
 	parseSync(paths) {
 		const data = paths.map((svgPath) => {
 			return this.parseFileSync(svgPath);
@@ -109,6 +104,7 @@ class Saxicon {
 			height = null,
 			rootNode = null,
 			doc = null,
+			dom = null,
 			source;
 
 		try {
@@ -126,29 +122,30 @@ class Saxicon {
 		}
 
 		try {
-			doc = libxml.parseXmlString(source, this.options.parseOptions);
-			rootNode = doc.root();
+			dom = new JSDOM(source, {
+				contentType: 'text/xml'
+			});
+			doc = dom.window.document;
+			rootNode = doc.querySelector('svg');
 		} catch (e) {
 			return {
 				path: svgPath,
 				errors: [{
-					message: e.message.trim(),
-					line: e.line,
-					column: e.column
+					message: e.message.trim()
 				}]
 			};
 		}
 
 		// Document size
-		const widthAttribute = rootNode.attr('width');
-		const heightAttribute = rootNode.attr('height');
-		const viewBoxAttribute = rootNode.attr('viewBox');
+		const widthAttribute = rootNode.getAttribute('width');
+		const heightAttribute = rootNode.getAttribute('height');
+		const viewBoxAttribute = rootNode.getAttribute('viewBox');
 
 		if (widthAttribute !== null && heightAttribute !== null) {
-			width = parseFloat(widthAttribute.value());
-			height = parseFloat(heightAttribute.value());
+			width = parseFloat(widthAttribute);
+			height = parseFloat(heightAttribute);
 		} else if (viewBoxAttribute !== null) {
-			const viewBox = viewBoxAttribute.value().match(/\d+(?:\.\d+)?/g);
+			const viewBox = viewBoxAttribute.match(/\d+(?:\.\d+)?/g);
 			width = parseFloat(viewBox[2]);
 			height = parseFloat(viewBox[3]);
 		}
@@ -158,41 +155,11 @@ class Saxicon {
 
 		// Remove the version attribute
 		if (this.options.removeVersion === true) {
-			const versionAttribute = rootNode.attr('version');
-			if (versionAttribute) {
-				versionAttribute.remove();
-			}
+			rootNode.removeAttribute('version');
 		}
 
-		// libxml adds in the XML declaration, which needs to be removed for SVGs
-		const version = doc.version();
-		let docString = doc.toString().replace(Saxicon.getXMLDeclarationString(version), '');
-
-		// Check if xlink:href is used, otherwise, remove xlink:xmlns
-		const removeNamespace = [].concat(this.options.removeNamespaces);
-		if (docString.indexOf(' xlink:href=') === -1) {
-			removeNamespace.push('xmlns:xlink');
-		}
-
-		// Remove the namespace from the resulting string
-		rootNode.namespaces().forEach(ns => {
-			const prefix = ns.prefix() ? `:${ns.prefix()}` : '';
-			const attribute = `xmlns${prefix}`;
-
-			if (removeNamespace.includes(attribute)) {
-				const str = ` ${attribute}="${ns.href()}"`;
-				docString = docString.replace(str, '');
-			}
-		});
-
-		// Treat recoverable errors as warnings
-		let warnings = doc.errors.map((e) => {
-			return {
-				message: e.message.trim(),
-				line: e.line,
-				column: e.column
-			};
-		});
+		// Serialize DOM and remove XML declaration
+		let docString = dom.serialize().replace(/<\?xml[^\?]+\?>/, '').trim();
 
 		// Remove insignificant whitespace
 		docString = Saxicon.removeWhitespace(docString);
@@ -201,7 +168,6 @@ class Saxicon {
 			components: docString.split(COLOR_SPLIT_KEY),
 			iconName: this.options.iconName(svgPath),
 			path: svgPath,
-			warnings: warnings,
 			errors: [],
 			width: width,
 			height: height
@@ -219,7 +185,7 @@ class Saxicon {
 	}
 
 	walkChildNodes(node, inherited = null) {
-		const children = node.childNodes();
+		const children = node.childNodes;
 
 		if (inherited === null) {
 			inherited = {
@@ -230,20 +196,19 @@ class Saxicon {
 
 		for (let i = 0; i < children.length; i++) {
 			const node = children[i];
-			const nodeName = node.name();
-			const ignored = this.options.ignoreTags.includes(nodeName);
-			const includeTag = this.options.presentationTags.includes(nodeName) && ignored === false;
-			const structuralTag = this.options.structuralTags.includes(nodeName) && ignored === false;
+			const ignored = this.options.ignoreTags.includes(node.tagName);
+			const includeTag = this.options.presentationTags.includes(node.tagName) && ignored === false;
+			const structuralTag = this.options.structuralTags.includes(node.tagName) && ignored === false;
 
 			let fillValue = inherited.fill;
 			let strokeValue = inherited.stroke;
 
-			if (node.type() === 'element') {
+			if (node.nodeType === 1) {
 				if (includeTag || structuralTag) {
-					const fillAttribute = node.attr('fill');
-					const strokeAttribute = node.attr('stroke');
-					fillValue = (fillAttribute === null ? fillValue : fillAttribute.value());
-					strokeValue = (strokeAttribute === null ? strokeValue : strokeAttribute.value());
+					const fillAttribute = node.getAttribute('fill');
+					const strokeAttribute = node.getAttribute('stroke');
+					fillValue = (fillAttribute === null ? fillValue : fillAttribute);
+					strokeValue = (strokeAttribute === null ? strokeValue : strokeAttribute);
 
 					if (structuralTag === false && fillAttribute === null) {
 						fillValue = fillValue || 'black';
@@ -265,17 +230,13 @@ class Saxicon {
 				if (includeTag) {
 					if (isColorKeyword(fillValue)) {
 						if (this.allowedReplacement(fillValue)) {
-							node.attr({
-								fill: COLOR_SPLIT_KEY + fillValue + COLOR_SPLIT_KEY
-							});
+							node.setAttribute('fill', COLOR_SPLIT_KEY + fillValue + COLOR_SPLIT_KEY);
 						}
 					}
 
 					if (isColorKeyword(strokeValue)) {
 						if (this.allowedReplacement(strokeValue)) {
-							node.attr({
-								stroke: COLOR_SPLIT_KEY + strokeValue + COLOR_SPLIT_KEY
-							});
+							node.setAttribute('stroke', COLOR_SPLIT_KEY + strokeValue + COLOR_SPLIT_KEY);
 						}
 					}
 				}

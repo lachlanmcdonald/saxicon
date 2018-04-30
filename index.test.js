@@ -14,7 +14,6 @@ const { testConfig } = require('./package.json');
 const tmp = require('tmp');
 const fs = require('fs');
 const path = require('path');
-const libxml = require('libxmljs');
 
 const walkDirecory = (dir, results) => {
 	if (typeof results === 'undefined') {
@@ -188,42 +187,54 @@ describe('Saxicon', () => {
 			expect(results.exportable).toHaveLength(0);
 			expect(results.errors).toHaveLength(1);
 		});
+
+		describe('Throws on', () => {
+			const TEST_FILES = {
+				'Empty file': 'empty.svg',
+				'No close tag': 'noCloseTag.svg',
+				'Extra close tag': 'extraCloseTag.svg',
+				'Unclosed attribute': 'unclosedAttribute.svg'
+			};
+
+			for (let testName in TEST_FILES) {
+				if (TEST_FILES.hasOwnProperty(testName)) {
+					test(testName, () => {
+						const sax = new Saxicon();
+						const results = sax.parseSync([
+							path.join('svgs', 'xmldeclaration', TEST_FILES[testName])
+						]);
+
+						for (var i = 0; i < results.data.length; i++) {
+							expect(results.data[i].errors.length).toBeGreaterThan(0);
+						}
+					});
+				}
+			}
+		});
 	});
 
 	describe('XML Declarations', () => {
-		test('Omitted XML declaration does not return errors or warnings', () => {
+		test('Omitted XML declaration does not return errors', () => {
 			const sax = new Saxicon();
 			const results = sax.parseSync([
-				path.join('svgs', 'xmldeclaration', 'xmldeclaration10.svg')
+				path.join('svgs', 'xmldeclaration', 'none.svg')
 			]);
 
 			for (var i = 0; i < results.data.length; i++) {
-				expect(results.data[i].warnings).toHaveLength(0);
 				expect(results.data[i].errors).toHaveLength(0);
 			}
 		});
 
-		test('XML version 1.0 does not return errors or warnings', () => {
+		test('XML declaration are not included in result', () => {
 			const sax = new Saxicon();
 			const results = sax.parseSync([
-				path.join('svgs', 'xmldeclaration', 'xmldeclaration10.svg')
-			]);
-
-			for (var i = 0; i < results.data.length; i++) {
-				expect(results.data[i].warnings).toHaveLength(0);
-				expect(results.data[i].errors).toHaveLength(0);
-			}
-		});
-
-		test('XML version 1.1 returns a warning', () => {
-			const sax = new Saxicon();
-			const results = sax.parseSync([
+				path.join('svgs', 'xmldeclaration', 'xmldeclaration10.svg'),
 				path.join('svgs', 'xmldeclaration', 'xmldeclaration11.svg')
 			]);
 
 			for (var i = 0; i < results.data.length; i++) {
-				expect(results.data[i].warnings.length).toBeGreaterThan(0);
 				expect(results.data[i].errors).toHaveLength(0);
+				expect(results.data[i].components.join('')).not.toEqual(expect.stringMatching(/<?xml[^\?]+\?>/));
 			}
 		});
 	});
@@ -275,18 +286,6 @@ describe('Saxicon', () => {
 			const updatedInput = Saxicon.removeWhitespace(input);
 			expect(updatedInput).toBe(correct);
 		});
-
-		test('Has no side-effects with libxmljs', () => {
-			TEST_FILES.basic.forEach((filePath) => {
-				const svg = fs.readFileSync(filePath, 'utf8');
-				const doc = libxml.parseXmlString(svg, Saxicon.defaultOptions.parseOptions);
-
-				const updatedSvg = Saxicon.removeWhitespace(doc.toString());
-				const updatedDoc = libxml.parseXmlString(updatedSvg, Saxicon.defaultOptions.parseOptions);
-
-				expect(doc.toString()).toBe(updatedDoc.toString());
-			});
-		});
 	});
 });
 
@@ -295,7 +294,7 @@ Object.keys(testConfig.engines).forEach((name) => {
 
 	describe('Compiles', () => {
 		describe(name, () => {
-			test('All inputs are processed with no warnings', () => {
+			test('All inputs are processed with no errors', () => {
 				const sax = new Saxicon();
 				const results = sax.parseSync([
 					...TEST_FILES.basic,
@@ -306,7 +305,6 @@ Object.keys(testConfig.engines).forEach((name) => {
 				]);
 
 				for (var i = 0; i < results.data.length; i++) {
-					expect(results.data[i].warnings).toHaveLength(0);
 					expect(results.data[i].errors).toHaveLength(0);
 				}
 

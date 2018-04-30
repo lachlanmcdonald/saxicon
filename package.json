@@ -42,12 +42,13 @@
     "sass",
     "datauri"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "jsdom": "^11.10.0"
+  },
   "devDependencies": {
     "eslint": "^3.10.2",
     "jest": "^19.0.2",
     "jest-cli": "^22.1.4",
-    "libxmljs": "^0.18.7",
     "tmp": "0.0.33"
   }
 }
