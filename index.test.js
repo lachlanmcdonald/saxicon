@@ -201,7 +201,7 @@ describe('Saxicon', () => {
 					test(testName, () => {
 						const sax = new Saxicon();
 						const results = sax.parseSync([
-							path.join('svgs', 'xmldeclaration', TEST_FILES[testName])
+							path.join('svgs', 'bad', TEST_FILES[testName])
 						]);
 
 						for (var i = 0; i < results.data.length; i++) {
