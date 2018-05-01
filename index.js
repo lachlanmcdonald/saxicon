@@ -36,9 +36,9 @@ class SaxiconData {
 	}
 
 	scss() {
-		let scssUtils = fs.readFileSync('./lib/saxicon.scss', 'utf8'),
-			mapVariable = `$saxicon-map-${+new Date()}`,
-			map = [];
+		const scssUtils = fs.readFileSync(path.join(__dirname, 'lib', 'saxicon.scss'), 'utf8');
+		const mapVariable = `$saxicon-map-${+new Date()}`;
+		const map = [];
 
 		this.exportable.forEach((set) => {
 			set.svg = set.components.map(x => {
