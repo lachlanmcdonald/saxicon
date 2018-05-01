@@ -192,7 +192,9 @@ describe('Saxicon', () => {
 			const TEST_FILES = {
 				'Empty file': 'empty.svg',
 				'No close tag': 'noCloseTag.svg',
+				'No closing SVG tag': 'noClosingSVG.svg',
 				'Extra close tag': 'extraCloseTag.svg',
+				'SVG not root tag': 'notRoot.svg',
 				'Unclosed attribute': 'unclosedAttribute.svg'
 			};
 

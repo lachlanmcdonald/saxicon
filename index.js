@@ -124,12 +124,25 @@ class Saxicon {
 				contentType: 'text/xml'
 			});
 			doc = dom.window.document;
-			rootNode = doc.querySelector('svg');
+
+			for (var i = 0; i < doc.childNodes.length; i++) {
+				if (doc.childNodes[i].nodeName === 'svg') {
+					rootNode = doc.childNodes[i];
+				}
+			}
 		} catch (e) {
 			return {
 				path: svgPath,
+				errors: [e]
+			};
+		}
+
+		// Check if the document contains an SVG element
+		if (rootNode === null) {
+			return {
+				path: svgPath,
 				errors: [{
-					message: e.message.trim()
+					message: 'Document does not contain an <svg> element'
 				}]
 			};
 		}
