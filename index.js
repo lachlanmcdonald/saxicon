@@ -144,8 +144,10 @@ class Saxicon {
 			height = parseFloat(heightAttribute);
 		} else if (viewBoxAttribute !== null) {
 			const viewBox = viewBoxAttribute.match(/\d+(?:\.\d+)?/g);
-			width = parseFloat(viewBox[2]);
-			height = parseFloat(viewBox[3]);
+			if (viewBox !== null && viewBox.length === 4) {
+				width = parseFloat(viewBox[2]);
+				height = parseFloat(viewBox[3]);
+			}
 		}
 
 		// Walk nodes
