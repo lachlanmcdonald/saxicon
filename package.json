@@ -48,9 +48,10 @@
     "object.values": "github:es-shims/Object.values"
   },
   "devDependencies": {
-    "eslint": "^3.10.2",
-    "jest": "^19.0.2",
-    "jest-cli": "^22.1.4",
+    "eslint": "^4.19.1",
+    "jest": "^22.4.3",
+    "jest-cli": "^22.4.3",
+    "request": "^2.85.0",
     "tmp": "0.0.33"
   }
 }
