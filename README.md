@@ -1,4 +1,4 @@
-# saxicon
+# 🎷 saxicon
 
 [![npm](https://img.shields.io/npm/v/saxicon.svg)](https://www.npmjs.com/package/saxicon)
 [![npm](https://img.shields.io/npm/l/saxicon.svg)](https://github.com/lachlanmcdonald/saxicon/blob/master/LICENSE)
