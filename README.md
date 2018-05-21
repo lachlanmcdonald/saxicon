@@ -31,13 +31,14 @@ Saxicon is useful when you want to:
 ## Quick start
 
 ```js
+const fs = require('fs');
 const { Saxicon } = require('saxicon');
 
 // Initialise a new Saxicon instance
 const sax = new Saxicon();
 
 // Parse SVG files
-const result = sax.parse([
+const result = sax.parseSync([
     'path/to/icon1.svg',
     'path/to/icon2.svg',
     'path/to/icon3.svg',
