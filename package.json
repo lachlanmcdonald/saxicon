@@ -19,6 +19,10 @@
   "scripts": {
     "test": "jest"
   },
+  "jest": {
+    "verbose": true,
+    "testURL": "http://localhost/"
+  },
   "files": [
     "lib/*",
     "index.js"
@@ -44,13 +48,12 @@
     "datauri"
   ],
   "dependencies": {
-    "jsdom": "^11.11.0",
+    "jsdom": "^11.12.0",
     "object.values": "github:es-shims/Object.values"
   },
   "devDependencies": {
     "eslint": "^4.19.1",
     "jest": "^22.4.4",
-    "jest-cli": "^22.4.4",
     "request": "^2.86.0",
     "tmp": "0.0.33"
   }
