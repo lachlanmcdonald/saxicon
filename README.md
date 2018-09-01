@@ -6,8 +6,6 @@
 
 > The **saxicon** module transforms SVGs into a SASS snippet that allows you to generate colorized SVGs (with both single or multi-colored shapes) within SASS, with each SVG embedded as a data-URI.
 
-🌱 *This is a beta release, use with care!*
-
 Saxicon is useful when you want to:
 
 1. Colorise your SVGs into a number of different colors, where these colors are embedded in your SCSS as a data-URI. For example, for theming support or reducing the overhead of manually editing SVG icons to match changes to your styleguide.
