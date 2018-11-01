@@ -8,7 +8,7 @@
 
 Saxicon is useful when you want to:
 
-1. Colorise your SVGs into a number of different colors, where these colors are embedded in your SCSS as a data-URI. For example, for theming support or reducing the overhead of manually editing SVG icons to match changes to your styleguide.
+1. Colorise your icon SVGs into a number of different colors, where these icons are embedded in your SCSS as a data-URI. For example, for theming support or reducing the overhead of manually editing icons to match changes to your styleguide.
 2. When you want to store your SVGs in CSS, and directly embedding them in your HTML is not applicable. For example, when working with a CMS.
 
 **Features**
