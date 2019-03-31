@@ -35,15 +35,20 @@ const { Saxicon } = require('saxicon');
 // Initialise a new Saxicon instance
 const sax = new Saxicon();
 
-// Parse SVG files
-const result = sax.parseSync([
-    'path/to/icon1.svg',
+// Parse a single SVG file
+sax.parseSync('path/to/icon1.svg');
+
+// Parse multiple SVG files
+sax.parseSync([
     'path/to/icon2.svg',
     'path/to/icon3.svg',
 ]);
 
+// Parse a string as a SVG file 
+sax.parseString(someMarkup);
+
 // Write SCSS to file
-fs.writeFile('saxicon.scss', result.scss(), (err) => {
+fs.writeFile('saxicon.scss', sax.scss(), (err) => {
     if (err) {
         throw new Error(err);
     }
@@ -53,6 +58,8 @@ fs.writeFile('saxicon.scss', result.scss(), (err) => {
 Then in your SCSS:
 
 ```scss
+@import 'saxicon';
+
 .icon1 {
     background-image: sax(icon1, #F00);
 }
