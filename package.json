@@ -1,6 +1,6 @@
 {
   "name": "saxicon",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
   "license": "BSD-3-Clause",
   "homepage": "https://github.com/lachlanmcdonald/saxicon/",
@@ -48,13 +48,13 @@
     "datauri"
   ],
   "dependencies": {
-    "jsdom": "^11.12.0",
+    "jsdom": "^14.0.0",
     "object.values": "github:es-shims/Object.values"
   },
   "devDependencies": {
-    "eslint": "^4.19.1",
-    "jest": "^22.4.4",
-    "request": "^2.86.0",
-    "tmp": "0.0.33"
+    "eslint": "^5.16.0",
+    "jest": "^24.5.0",
+    "request": "^2.88.0",
+    "tmp": "0.1.0"
   }
 }
