@@ -48,12 +48,12 @@
     "datauri"
   ],
   "dependencies": {
-    "jsdom": "^14.0.0",
+    "jsdom": "^15.1.0",
     "object.values": "github:es-shims/Object.values"
   },
   "devDependencies": {
     "eslint": "^5.16.0",
-    "jest": "^24.5.0",
+    "jest": "^24.8.0",
     "request": "^2.88.0",
     "tmp": "0.1.0"
   }
