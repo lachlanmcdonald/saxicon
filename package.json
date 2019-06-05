@@ -27,7 +27,8 @@
   },
   "files": [
     "lib/*",
-    "index.js"
+    "index.js",
+    "LICENSE"
   ],
   "testConfig": {
     "engines": {
@@ -50,8 +51,7 @@
     "datauri"
   ],
   "dependencies": {
-    "jsdom": "^15.1.1",
-    "object.values": "github:es-shims/Object.values"
+    "jsdom": "^15.1.1"
   },
   "devDependencies": {
     "eslint": "^5.16.0",
