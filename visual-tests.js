@@ -5,7 +5,6 @@
  *
  * Licensed under the BSD 3-Clause license.
  */
-'use strict';
 
 const { Saxicon } = require('./index');
 const { execSync } = require('child_process');

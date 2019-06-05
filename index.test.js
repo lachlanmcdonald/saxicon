@@ -5,7 +5,6 @@
  *
  * Licensed under the BSD 3-Clause license.
  */
-'use strict';
 
 const { Saxicon } = require('./index');
 const { getColorKeyword, isColorKeyword } = require('./lib/Colors');
@@ -236,7 +235,7 @@ describe('Saxicon', () => {
 
 			for (var i = 0; i < results.data.length; i++) {
 				expect(results.data[i].errors).toHaveLength(0);
-				expect(results.data[i].components.join('')).not.toEqual(expect.stringMatching(/<?xml[^\?]+\?>/));
+				expect(results.data[i].components.join('')).not.toEqual(expect.stringMatching(/<?xml[^?]+\?>/));
 			}
 		});
 	});

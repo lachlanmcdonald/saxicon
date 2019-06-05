@@ -1,5 +1,6 @@
 module.exports = {
 	root: true,
+	extends: "eslint:recommended",
 	env: {
 		node: true,
     	jest: true,
@@ -7,6 +8,7 @@ module.exports = {
 	},
 	rules: {
 		'no-debugger': 'error',
+		'no-useless-escape': 'warn',
 		'no-bitwise': 'error',
 		'camelcase': ['error', {
 			properties: 'never'
@@ -29,7 +31,6 @@ module.exports = {
 		'quotes': ['error', 'single'],
 		'no-undef': 'error',
 		'no-unused-vars': 'warn',
-		'strict': 'error',
 		'semi': 'error',
 		'space-before-function-paren': ['error', 'never'],
 		'array-bracket-spacing': ['error', 'never'],
