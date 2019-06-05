@@ -56,7 +56,6 @@
   "devDependencies": {
     "eslint": "^5.16.0",
     "jest": "^24.8.0",
-    "request": "^2.88.0",
     "tmp": "0.1.0"
   }
 }
