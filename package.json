@@ -48,7 +48,7 @@
     "datauri"
   ],
   "dependencies": {
-    "jsdom": "^15.1.0",
+    "jsdom": "^15.1.1",
     "object.values": "github:es-shims/Object.values"
   },
   "devDependencies": {
