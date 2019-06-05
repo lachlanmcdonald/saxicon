@@ -5,7 +5,6 @@
  *
  * Licensed under the BSD 3-Clause license.
  */
-'use strict';
 
 const path = require('path');
 const fs = require('fs');
@@ -50,16 +49,12 @@ class SaxiconData {
 
 		return `${scssUtils}
 			${mapVariable}: (${map.join(',\n')});
-			@if (variable_exists(saxicon-map)) {
-				$saxicon-map: map_merge($saxicon-map, ${mapVariable}) !global;
-			} @else {
-				$saxicon-map: ${mapVariable} !global;
-			}
+			$saxicon-map: map_merge($saxicon-map, ${mapVariable});
 		`;
 	}
 
 	static encode(s) {
-		return s.replace(/[^\ \-\.\d\w\=\:\/]/g, escape).replace(/"/g, '\'').replace(/%u([a-f0-9]{4})/gi, '%26%23x$1;');
+		return s.replace(/[^ \-.\d\w=:/]/g, escape).replace(/"/g, '\'').replace(/%u([a-f0-9]{4})/gi, '%26%23x$1;');
 	}
 }
 
@@ -172,7 +167,7 @@ class Saxicon {
 		}
 
 		// Serialize DOM and remove XML declaration
-		let docString = dom.serialize().replace(/<\?xml[^\?]+\?>/, '').trim();
+		let docString = dom.serialize().replace(/<\?xml[^?]+\?>/, '').trim();
 
 		// Remove insignificant whitespace
 		docString = Saxicon.removeWhitespace(docString);

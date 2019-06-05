@@ -8,6 +8,8 @@
 	(This file is generated with saxicon and should not be updated manually.)
 */
 
+$saxicon-map: () !default;
+
 @mixin sax-classes($color, $prefix: ".icon-") {
 	@each $icon, $svg in $saxicon-map {
 		#{$prefix}#{$icon} {
