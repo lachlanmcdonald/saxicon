@@ -6,25 +6,21 @@
  * Licensed under the BSD 3-Clause license.
  */
 
-const { Saxicon } = require('./index');
+const { Saxicon} = require('./index');
 const { getColorKeyword, isColorKeyword } = require('./lib/Colors');
-const { execSync } = require('child_process');
-const { testConfig } = require('./package.json');
+const { execSync} = require('child_process');
+const { testConfig} = require('./package.json');
 const tmp = require('tmp');
 const fs = require('fs');
 const path = require('path');
 
-const walkDirecory = (dir, results) => {
-	if (typeof results === 'undefined') {
-		results = [];
-	}
-
-	fs.readdirSync(dir).forEach((fileName) => {
-		var filePath = path.join(dir, fileName),
-			stats = fs.statSync(filePath);
+const walkDirecory = (dir, results = []) => {
+	fs.readdirSync(dir).forEach(fileName => {
+		const filePath = path.join(dir, fileName);
+		const stats = fs.statSync(filePath);
 
 		if (stats.isDirectory()) {
-			results = walkDirecory(filePath, results);
+			walkDirecory(filePath, results);
 		} else if (stats.isFile()) {
 			if (path.extname(fileName) === '.svg') {
 				results.push(filePath);
@@ -40,7 +36,7 @@ const TEST_FILES = {
 	blend: walkDirecory(path.join('svgs', 'blend')),
 	gradient: walkDirecory(path.join('svgs', 'gradient')),
 	mask: walkDirecory(path.join('svgs', 'mask')),
-	utf8: walkDirecory(path.join('svgs', 'utf8'))
+	utf8: walkDirecory(path.join('svgs', 'utf8')),
 };
 
 describe('svgColors', () => {
@@ -71,7 +67,6 @@ describe('svgColors', () => {
 			expect(getColorKeyword(true)).toBe(true);
 			expect(getColorKeyword(false)).toBe(false);
 			expect(getColorKeyword(null)).toBe(null);
-			expect(getColorKeyword(undefined)).toBe(undefined);
 		});
 	});
 
@@ -98,7 +93,6 @@ describe('svgColors', () => {
 			expect(isColorKeyword(true)).toBe(false);
 			expect(isColorKeyword(false)).toBe(false);
 			expect(isColorKeyword(null)).toBe(false);
-			expect(isColorKeyword(undefined)).toBe(false);
 		});
 	});
 });
@@ -115,7 +109,7 @@ describe('Saxicon', () => {
 				object: 1,
 				string: 1,
 				symbol: null,
-				undefined: 1
+				undefined: 1,
 			};
 
 			Saxicon.validateOptions().forEach(optionTest => {
@@ -128,44 +122,42 @@ describe('Saxicon', () => {
 				OPTION_TESTS[args[1]].push([type, args.slice(2)]);
 			});
 
-			for (let property in OPTION_TESTS) {
+			for (const property in OPTION_TESTS) {
 				if (OPTION_TESTS.hasOwnProperty(property)) {
 					test(property, () => {
-						OPTION_TESTS[property].forEach((x) => {
+						OPTION_TESTS[property].forEach(x => {
 							const [fn, args] = x;
 
 							if (['isBoolean', 'isFunction', 'isArray'].includes(fn)) {
 								expect(() => {
 									new Saxicon({
-										[property]: null
+										[property]: null,
 									});
 								}).toThrow();
 							} else if (fn === 'isObject') {
 								expect(() => {
 									new Saxicon({
-										[property]: []
+										[property]: [],
 									});
 								}).toThrow();
 							} else if (fn === 'isNotEmpty') {
 								expect(() => {
 									new Saxicon({
-										[property]: []
+										[property]: [],
 									});
 								}).toThrow();
 							} else if (fn === 'isArrayOf') {
 								expect(() => {
 									new Saxicon({
-										[property]: [REVERSE_TYPES[args[0]]]
+										[property]: [REVERSE_TYPES[args[0]]],
 									});
 								}).toThrow();
 							} else if (fn === 'functionReturnsType') {
-								const erroneousFunction = () => {
-									return REVERSE_TYPES[args[1]];
-								};
+								const erroneousFunction = () => REVERSE_TYPES[args[1]];
 
 								expect(() => {
 									new Saxicon({
-										[property]: erroneousFunction
+										[property]: erroneousFunction,
 									});
 								}).toThrow();
 							}
@@ -180,7 +172,7 @@ describe('Saxicon', () => {
 		test('Catches ENOENT errors', () => {
 			const sax = new Saxicon();
 			const results = sax.parseSync([
-				'filedoesntexist.svg'
+				'filedoesntexist.svg',
 			]);
 
 			expect(results.exportable).toHaveLength(0);
@@ -194,18 +186,18 @@ describe('Saxicon', () => {
 				'No closing SVG tag': 'noClosingSVG.svg',
 				'Extra close tag': 'extraCloseTag.svg',
 				'SVG not root tag': 'notRoot.svg',
-				'Unclosed attribute': 'unclosedAttribute.svg'
+				'Unclosed attribute': 'unclosedAttribute.svg',
 			};
 
-			for (let testName in TEST_FILES) {
+			for (const testName in TEST_FILES) {
 				if (TEST_FILES.hasOwnProperty(testName)) {
 					test(testName, () => {
 						const sax = new Saxicon();
 						const results = sax.parseSync([
-							path.join('svgs', 'bad', TEST_FILES[testName])
+							path.join('svgs', 'bad', TEST_FILES[testName]),
 						]);
 
-						for (var i = 0; i < results.data.length; i++) {
+						for (let i = 0; i < results.data.length; i += 1) {
 							expect(results.data[i].errors.length).toBeGreaterThan(0);
 						}
 					});
@@ -218,10 +210,10 @@ describe('Saxicon', () => {
 		test('Omitted XML declaration does not return errors', () => {
 			const sax = new Saxicon();
 			const results = sax.parseSync([
-				path.join('svgs', 'xmldeclaration', 'none.svg')
+				path.join('svgs', 'xmldeclaration', 'none.svg'),
 			]);
 
-			for (var i = 0; i < results.data.length; i++) {
+			for (let i = 0; i < results.data.length; i += 1) {
 				expect(results.data[i].errors).toHaveLength(0);
 			}
 		});
@@ -230,12 +222,12 @@ describe('Saxicon', () => {
 			const sax = new Saxicon();
 			const results = sax.parseSync([
 				path.join('svgs', 'xmldeclaration', 'xmldeclaration10.svg'),
-				path.join('svgs', 'xmldeclaration', 'xmldeclaration11.svg')
+				path.join('svgs', 'xmldeclaration', 'xmldeclaration11.svg'),
 			]);
 
-			for (var i = 0; i < results.data.length; i++) {
+			for (let i = 0; i < results.data.length; i += 1) {
 				expect(results.data[i].errors).toHaveLength(0);
-				expect(results.data[i].components.join('')).not.toEqual(expect.stringMatching(/<?xml[^?]+\?>/));
+				expect(results.data[i].components.join('')).not.toEqual(expect.stringMatching(/<?xml[^?]+\?>/u));
 			}
 		});
 	});
@@ -245,7 +237,7 @@ describe('Saxicon', () => {
 
 		test('Both viewBox and attributes', () => {
 			const results = sax.parseSync([
-				path.join('svgs', 'dimensions', 'both.svg')
+				path.join('svgs', 'dimensions', 'both.svg'),
 			]);
 
 			expect(results.data[0].width).toBe(134);
@@ -254,7 +246,7 @@ describe('Saxicon', () => {
 
 		test('Only viewBox', () => {
 			const results = sax.parseSync([
-				path.join('svgs', 'dimensions', 'viewbox.svg')
+				path.join('svgs', 'dimensions', 'viewbox.svg'),
 			]);
 
 			expect(results.data[0].width).toBe(134);
@@ -263,7 +255,7 @@ describe('Saxicon', () => {
 
 		test('Only attributes', () => {
 			const results = sax.parseSync([
-				path.join('svgs', 'dimensions', 'attributes.svg')
+				path.join('svgs', 'dimensions', 'attributes.svg'),
 			]);
 
 			expect(results.data[0].width).toBe(134);
@@ -272,7 +264,7 @@ describe('Saxicon', () => {
 
 		test('Neither viewBox and attributes', () => {
 			const results = sax.parseSync([
-				path.join('svgs', 'dimensions', 'none.svg')
+				path.join('svgs', 'dimensions', 'none.svg'),
 			]);
 
 			expect(results.data[0].width).toBeNull();
@@ -285,12 +277,13 @@ describe('Saxicon', () => {
 			const input = fs.readFileSync(path.join('svgs', 'whitespace', 'whitespace.svg'), 'utf8');
 			const correct = fs.readFileSync(path.join('svgs', 'whitespace', 'no-whitespace.svg'), 'utf8');
 			const updatedInput = Saxicon.removeWhitespace(input);
+
 			expect(updatedInput).toBe(correct);
 		});
 	});
 });
 
-Object.keys(testConfig.engines).forEach((name) => {
+Object.keys(testConfig.engines).forEach(name => {
 	const command = testConfig.engines[name];
 
 	describe('Compiles', () => {
@@ -302,14 +295,15 @@ Object.keys(testConfig.engines).forEach((name) => {
 					...TEST_FILES.blend,
 					...TEST_FILES.gradient,
 					...TEST_FILES.mask,
-					...TEST_FILES.utf8
+					...TEST_FILES.utf8,
 				]);
 
-				for (var i = 0; i < results.data.length; i++) {
+				for (let i = 0; i < results.data.length; i += 1) {
 					expect(results.data[i].errors).toHaveLength(0);
 				}
 
 				const tempFile = tmp.fileSync({postfix: '.scss'});
+
 				fs.writeSync(tempFile.fd, results.scss());
 
 				execSync(`${command} "${tempFile.name}"`);
