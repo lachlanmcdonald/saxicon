@@ -54,7 +54,7 @@
     "jsdom": "^15.1.1"
   },
   "devDependencies": {
-    "eslint": "^5.16.0",
+    "eslint": "^6.0.1",
     "jest": "^24.8.0",
     "tmp": "0.1.0"
   }
