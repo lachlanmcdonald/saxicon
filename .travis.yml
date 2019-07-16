@@ -10,8 +10,8 @@ node_js:
 addons:
   homebrew:
     packages:
-    - sassc
-    - sass/sass/sass
+      - sassc
+      - sass/sass/sass
 cache:
   directories:
     - node_modules
