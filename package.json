@@ -32,8 +32,8 @@
   ],
   "testConfig": {
     "engines": {
-      "sassc": "/usr/local/opt/sassc/bin/sassc --style compressed",
-      "Dart Sass": "/usr/local/opt/sass/bin/sass --style compressed"
+      "sassc": "sassc --style compressed",
+      "Dart Sass": "sass --style compressed"
     }
   },
   "eslintConfig": {

@@ -7,11 +7,13 @@ node_js:
   - "8"
   - "node"
   - "lts/*"
-addons:
-  homebrew:
-    packages:
-      - sassc
-      - sass/sass/sass
+before_cache:
+  - brew cleanup
+before_script:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install sassc ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install sass/sass/sass ; fi
 cache:
   directories:
     - node_modules
+    - $HOME/Library/Caches/Homebrew
