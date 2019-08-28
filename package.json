@@ -32,7 +32,7 @@
   ],
   "testConfig": {
     "engines": {
-      "sassc": "sassc --style compact",
+      "sassc": "sassc --style compressed",
       "Dart Sass": "sass --style compressed"
     }
   },
