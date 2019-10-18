@@ -51,6 +51,7 @@
     "datauri"
   ],
   "dependencies": {
+    "canvas": "^2.6.0",
     "jsdom": "^15.2.0"
   },
   "devDependencies": {
