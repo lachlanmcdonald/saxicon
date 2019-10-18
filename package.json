@@ -51,10 +51,10 @@
     "datauri"
   ],
   "dependencies": {
-    "jsdom": "^15.1.1"
+    "jsdom": "^15.2.0"
   },
   "devDependencies": {
-    "eslint": "^6.2.2",
+    "eslint": "^6.5.1",
     "jest": "^24.9.0",
     "tmp": "0.1.0"
   }
