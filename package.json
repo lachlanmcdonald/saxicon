@@ -52,11 +52,11 @@
   ],
   "dependencies": {
     "canvas": "^2.6.0",
-    "jsdom": "^15.2.0"
+    "jsdom": "^15.2.1"
   },
   "devDependencies": {
-    "@lachlanmcdonald/eslint-config-eslint": "^0.1.5",
-    "eslint": "^6.5.1",
+    "@lachlanmcdonald/eslint-config-eslint": "^0.2.0",
+    "eslint": "^6.7.2",
     "jest": "^24.9.0",
     "tmp": "0.1.0"
   }
