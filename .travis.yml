@@ -3,9 +3,8 @@ os:
 language: node_js
 node_js:
   - "10"
-  - "9"
-  - "8"
-  - "node"
+  - "12"
+  - "stable"
   - "lts/*"
 before_cache:
   - brew cleanup
