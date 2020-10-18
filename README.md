@@ -2,9 +2,10 @@
 
 [![npm version](https://badge.fury.io/js/saxicon.svg)](https://badge.fury.io/js/saxicon)
 [![License](https://img.shields.io/npm/l/saxicon.svg)](https://github.com/lachlanmcdonald/saxicon/blob/master/LICENSE)
-[![Build Status](https://travis-ci.org/lachlanmcdonald/saxicon.svg?branch=master)](https://travis-ci.org/lachlanmcdonald/saxicon)
 
 > The **saxicon** module transforms SVGs into a SASS snippet that allows you to generate colorized SVGs (with both single or multi-colored shapes) within SASS, with each SVG embedded as a data-URI.
+
+<p style="color: red;"><b>Deprecation warning</b>: This module is no longer maintained and will not receive any further security updates or fixes.</p>
 
 Saxicon is useful when you want to:
 
