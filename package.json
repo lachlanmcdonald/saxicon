@@ -32,7 +32,6 @@
   ],
   "testConfig": {
     "engines": {
-      "sassc": "sassc --style compressed",
       "Dart Sass": "sass --style compressed"
     }
   },
@@ -51,13 +50,12 @@
     "datauri"
   ],
   "dependencies": {
-    "canvas": "^2.6.1",
-    "jsdom": "^16.2.1"
+    "jsdom": "^19.0.0"
   },
   "devDependencies": {
-    "@lachlanmcdonald/eslint-config-eslint": "^0.3.0",
-    "eslint": "^6.8.0",
-    "jest": "^25.1.0",
-    "tmp": "0.1.0"
+    "@lachlanmcdonald/eslint-config-eslint": "^0.4.1",
+    "eslint": "^8.14.0",
+    "jest": "^28.0.3",
+    "tmp": "^0.2.1"
   }
 }
