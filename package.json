@@ -23,7 +23,9 @@
   },
   "jest": {
     "verbose": true,
-    "testURL": "http://localhost/"
+    "testEnvironmentOptions": {
+      "url": "http://localhost/"
+    }
   },
   "files": [
     "lib/*",
