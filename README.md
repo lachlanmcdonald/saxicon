@@ -16,7 +16,6 @@ Saxicon is useful when you want to:
 
 - Significantly faster than [grunt-icon](https://github.com/filamentgroup/grunticon) or plugins for inlining SVGs with PostCSS.
 - Robust unit and visual tests
-- Works with [libsass](https://sass-lang.com/LibSass) and Dart Sass (replaces Ruby Sass)
 
 **Task runners:**
 
