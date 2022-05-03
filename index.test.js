@@ -1,10 +1,8 @@
 /*
- * saxicon
- * Copyright (c) 2020 Lachlan McDonald
+ * Copyright (c) 2022 Lachlan McDonald
+ * This work is licensed under the MIT License (MIT)
  * https://github.com/lachlanmcdonald/saxicon/
- * (Licensed under the BSD 3-Clause license)
  */
-
 const { Saxicon} = require('./index');
 const { getColorKeyword, isColorKeyword } = require('./lib/Colors');
 const { execSync} = require('child_process');
